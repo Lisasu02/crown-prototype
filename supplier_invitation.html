@@ -388,9 +388,15 @@ function restoreFocus(info) {
 }
 
 // Close dropdown on outside click
+var suppressFocusOpen = false;
 document.addEventListener('mousedown', function(e) {
   if (!e.target.closest('.search-wrap') && !e.target.closest('.dropdown')) {
-    if (dropdownOpen) { dropdownOpen = false; draw(); }
+    if (dropdownOpen) {
+      dropdownOpen = false;
+      suppressFocusOpen = true;
+      draw();
+      setTimeout(function() { suppressFocusOpen = false; }, 200);
+    }
   }
   if (!e.target.closest('.co-search-wrap') && !e.target.closest('.co-dropdown')) {
     if (invCoDropdownOpen) { invCoDropdownOpen = false; draw(); }
@@ -415,7 +421,7 @@ function draw() {
 
   h += '<div class="search-row">';
   h += '<div class="search-wrap">';
-  h += '<input class="sinput" id="search-input" placeholder="Paste supplier email address..." value="' + esc(query) + '" oninput="setQuery(this.value)" onfocus="dropdownOpen=true;draw()" autocomplete="off" />';
+  h += '<input class="sinput" id="search-input" placeholder="Paste supplier email address..." value="' + esc(query) + '" oninput="setQuery(this.value)" onfocus="if(!suppressFocusOpen){dropdownOpen=true;draw()}" autocomplete="off" />';
 
   // Dropdown
   if (dropdownOpen && !showInvitePanel) {
@@ -439,14 +445,14 @@ function draw() {
   }
   h += '</div>'; // search-wrap
 
-  h += '<button class="btn btn-invite" onclick="openInvitePanel()">+ Invite a new supplier</button>';
+  h += '<button class="btn btn-invite" onmousedown="event.preventDefault();openInvitePanel()">+ Invite a new supplier</button>';
   h += '</div>'; // search-row
 
   // No results warning (when typing but dropdown closed or no match)
   if (query.length >= 2 && items.length === 0 && !dropdownOpen && !showInvitePanel) {
     h += '<div class="warn-inline">';
     h += '<div><strong>No account found</strong> for \u201C' + esc(query) + '\u201D</div>';
-    h += '<button class="btn btn-p btn-sm" onclick="openInvitePanel()">Invite new supplier \u2192</button>';
+    h += '<button class="btn btn-p btn-sm" onmousedown="event.preventDefault();openInvitePanel()">Invite new supplier \u2192</button>';
     h += '</div>';
   }
 
