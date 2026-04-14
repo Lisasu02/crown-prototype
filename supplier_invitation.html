@@ -22,9 +22,22 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 .ctitle { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 3px; }
 .csub { font-size: 12px; color: #888; margin-bottom: 16px; line-height: 1.5; }
 
-.search-row { display: flex; gap: 10px; align-items: center; }
-.sinput { flex: 1; padding: 10px 14px; border: 1px solid #E0DDD6; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; transition: border 0.15s; }
+.search-row { display: flex; gap: 10px; align-items: center; position: relative; }
+.search-wrap { flex: 1; position: relative; }
+.sinput { width: 100%; padding: 10px 14px; border: 1px solid #E0DDD6; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; transition: border 0.15s; }
 .sinput:focus { border-color: #1E8A3A; background: #fff; }
+
+.dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0DDD6; border-top: none; border-radius: 0 0 8px 8px; max-height: 280px; overflow-y: auto; z-index: 50; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.dd-item { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.08s; border-bottom: 1px solid #F5F3EE; }
+.dd-item:last-child { border-bottom: none; }
+.dd-item:hover { background: #F5FBF6; }
+.dd-item-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.dd-avatar { width: 30px; height: 30px; border-radius: 50%; background: #D6EAD9; color: #1E8A3A; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+.dd-name { font-size: 13px; font-weight: 600; color: #111; }
+.dd-email { font-size: 11px; color: #888; }
+.dd-co { font-size: 11px; color: #AAA; font-weight: 500; white-space: nowrap; flex-shrink: 0; margin-left: 12px; }
+.dd-empty { padding: 14px; text-align: center; font-size: 12px; color: #AAA; }
+.dd-title { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #CCC; background: #FAFAF8; }
 
 .btn { padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; white-space: nowrap; }
 .btn-p { background: #1E8A3A; color: #fff; }
@@ -32,37 +45,43 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 .btn-p:disabled { opacity: 0.35; cursor: not-allowed; }
 .btn-s { background: #fff; color: #111; border: 1px solid #E0DDD6; }
 .btn-s:hover { background: #F5F3EE; }
-.btn-add { background: #E8F5E9; color: #1E8A3A; border: 1px solid #C8E6C9; padding: 6px 14px; font-size: 11px; }
-.btn-add:hover { background: #C8E6C9; }
+.btn-invite { background: #1E8A3A; color: #fff; padding: 10px 16px; font-size: 12px; }
+.btn-invite:hover { background: #166B2D; }
 .btn-sm { padding: 6px 14px; font-size: 11px; }
 .btn-loading { position: relative; pointer-events: none; }
 .btn-loading::after { content: ''; position: absolute; width: 12px; height: 12px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; right: 10px; top: 50%; margin-top: -6px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.results { margin-top: 12px; }
-.results-title { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #BBB; margin-bottom: 8px; }
-.rlist { border: 1px solid #E0DDD6; border-radius: 8px; overflow-y: auto; max-height: 280px; }
-.ritem { padding: 10px 14px; border-bottom: 1px solid #F0EDE8; display: flex; justify-content: space-between; align-items: center; transition: background 0.1s; }
-.ritem:last-child { border-bottom: none; }
-.ritem:hover { background: #F5FBF6; }
-.ritem-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-.ravatar { width: 32px; height: 32px; border-radius: 50%; background: #D6EAD9; color: #1E8A3A; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
-.ritem-text { min-width: 0; }
-.ritem-name { font-size: 13px; font-weight: 600; color: #111; }
-.ritem-detail { font-size: 11px; color: #888; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ritem-co { font-size: 10px; color: #AAA; margin-top: 1px; }
-
-.no-results { padding: 16px; text-align: center; }
-.no-results-text { font-size: 12px; color: #888; margin-bottom: 10px; }
-.no-results-query { font-weight: 700; color: #555; }
-
 .warn-inline { background: #FFFDE7; border: 1px solid #FFD54F; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #7B5E00; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 
 /* Invite panel */
 .invite-panel { border: 1px solid #E0DDD6; border-radius: 10px; padding: 18px; margin-top: 14px; background: #FAFDF9; }
-.invite-panel-title { font-size: 13px; font-weight: 700; color: #1E8A3A; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+.invite-panel-title { font-size: 14px; font-weight: 700; color: #1E8A3A; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
 .invite-close { background: none; border: none; font-size: 16px; color: #AAA; cursor: pointer; padding: 0 4px; }
 .invite-close:hover { color: #555; }
+.invite-step { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+
+/* Company search inside invite */
+.co-search-wrap { position: relative; margin-bottom: 12px; }
+.co-sinput { width: 100%; padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #fff; transition: border 0.15s; }
+.co-sinput:focus { border-color: #1E8A3A; }
+.co-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0DDD6; border-top: none; border-radius: 0 0 7px 7px; max-height: 180px; overflow-y: auto; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.co-dd-item { padding: 9px 12px; cursor: pointer; font-size: 13px; color: #333; border-bottom: 1px solid #F5F3EE; transition: background 0.08s; }
+.co-dd-item:last-child { border-bottom: none; }
+.co-dd-item:hover { background: #E8F5E9; }
+.co-dd-item.sel { background: #E8F5E9; font-weight: 600; }
+.co-dd-empty { padding: 12px; text-align: center; font-size: 12px; color: #AAA; }
+
+.co-selected { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; color: #1B5E2F; }
+.co-selected-clear { background: none; border: none; font-size: 14px; color: #888; cursor: pointer; }
+.co-selected-clear:hover { color: #E53935; }
+
+.create-co-btn { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px dashed #1E8A3A; border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 700; color: #1E8A3A; width: 100%; font-family: inherit; transition: all 0.12s; margin-bottom: 12px; }
+.create-co-btn:hover { background: #E8F5E9; border-style: solid; }
+
+.new-co-box { border: 1px solid #C8E6C9; border-radius: 8px; padding: 14px; background: #F5FBF6; margin-bottom: 12px; }
+.new-co-title { font-size: 11px; font-weight: 700; color: #1E8A3A; margin-bottom: 10px; }
+
 .fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
 .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .flabel { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #888; }
@@ -73,10 +92,10 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 .fselect { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; width: 100%; }
 .invite-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
 
-/* Link result after invite */
+/* Link display */
 .link-result { background: #F5F3EE; border: 1px solid #E0DDD6; border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; font-family: monospace; color: #888; }
 .link-result-url { flex: 1; word-break: break-all; line-height: 1.5; }
-.copy-btn { flex-shrink: 0; padding: 6px 14px; border: 1px solid #E0DDD6; border-radius: 6px; background: #fff; font-size: 11px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.copy-btn { flex-shrink: 0; padding: 5px 12px; border: 1px solid #E0DDD6; border-radius: 6px; background: #fff; font-size: 10px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.15s; }
 .copy-btn:hover { background: #E8F5E9; }
 .copy-btn.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
 
@@ -84,7 +103,6 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 .added-card { margin-top: 14px; }
 .added-title { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
 .added-count { background: #1E8A3A; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
-.added-list { }
 .added-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #F0EDE8; }
 .added-item:last-child { border-bottom: none; }
 .added-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
@@ -96,15 +114,20 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 .added-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 .added-badge.existing { background: #E8F5E9; color: #1E8A3A; }
 .added-badge.pending { background: #FFF3E0; color: #E65100; }
+.added-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .added-remove { background: none; border: none; font-size: 14px; color: #CCC; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: all 0.12s; }
 .added-remove:hover { color: #E53935; background: #FFF5F5; }
+.added-copy { padding: 3px 10px; border: 1px solid #E0DDD6; border-radius: 5px; background: #fff; font-size: 10px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.added-copy:hover { background: #E8F5E9; }
+.added-copy.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
 
 .empty-state { text-align: center; padding: 20px; color: #CCC; font-size: 12px; }
-
 .infobox { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #1B5E2F; margin-bottom: 14px; line-height: 1.5; }
 
 .flash { animation: flashIn 0.4s ease; }
 @keyframes flashIn { 0% { background: #C8E6C9; } 100% { background: transparent; } }
+
+.divider { height: 1px; background: #E8E5E0; margin: 14px 0; }
 
 @media (max-width: 520px) {
   .fg2 { grid-template-columns: 1fr; gap: 8px; }
@@ -130,23 +153,19 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 <script>
 // ── DATA ──
 var companies = [
-  { id:1, name:'CROWN Procurement', country:'France',
-    contacts:[
-      {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM'},
-      {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD'}
-    ]
-  },
-  { id:2, name:'Acme Supplies', country:'Germany',
-    contacts:[{id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM'}]
-  },
+  { id:1, name:'CROWN Procurement', country:'France', contacts:[
+    {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM'},
+    {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD'}
+  ]},
+  { id:2, name:'Acme Supplies', country:'Germany', contacts:[
+    {id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM'}
+  ]},
   { id:3, name:'Global Logistics SA', country:'Spain', contacts:[] },
-  { id:4, name:'Maersk', country:'Denmark',
-    contacts:[
-      {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ'},
-      {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA'},
-      {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN'}
-    ]
-  },
+  { id:4, name:'Maersk', country:'Denmark', contacts:[
+    {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ'},
+    {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA'},
+    {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN'}
+  ]},
   { id:5, name:'Cargill', country:'United States', contacts:[{id:51, name:'Mike Ross', email:'m.ross@cargill.com', initials:'MR'}] },
   { id:6, name:'BASF', country:'Germany', contacts:[{id:61, name:'Anna Weber', email:'a.weber@basf.de', initials:'AW'},{id:62, name:'Klaus Schmidt', email:'k.schmidt@basf.de', initials:'KS'}] },
   { id:7, name:'Nestl\u00E9', country:'Switzerland', contacts:[{id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB'}] },
@@ -164,15 +183,29 @@ var companies = [
 ];
 var buyers = ['Bonduelle','Safran','Kiabi'];
 
+// Flat list of all supplier accounts
+function getAllAccounts() {
+  var list = [];
+  companies.forEach(function(co) {
+    co.contacts.forEach(function(c) {
+      list.push({ id: c.id, name: c.name, email: c.email, initials: c.initials, company: co.name });
+    });
+  });
+  return list;
+}
+
 // ── STATE ──
 var role = 'admin';
 var query = '';
-var eventSuppliers = []; // { id, name, email, company, initials, isNew, inviteToken }
+var dropdownOpen = false;
+var eventSuppliers = [];
 var showInvitePanel = false;
-var invNewCoMode = false; // creating new company in invite panel
-var invCoId = '';
+// invite panel state
+var invCoQuery = '';
+var invCoDropdownOpen = false;
+var invSelectedCo = null; // { id, name }
+var invNewCoMode = false;
 var invNewCoName = '';
-var invNewCoCountry = '';
 var invName = '';
 var invEmail = '';
 var invBuyer = '';
@@ -185,43 +218,25 @@ var emailTouched = false;
 // ── HELPERS ──
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
-function getInitials(name) { var p=name.trim().split(/\s+/); return p.length>1 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : name.slice(0,2).toUpperCase(); }
+function getInitials(n) { var p=n.trim().split(/\s+/); return p.length>1 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase(); }
+function isAlreadyAdded(email) { return eventSuppliers.some(function(s){ return s.email.toLowerCase()===email.toLowerCase(); }); }
 
-function isAlreadyAdded(email) {
-  return eventSuppliers.some(function(s){ return s.email.toLowerCase() === email.toLowerCase(); });
-}
-
-// ── SEARCH ──
-function searchResults() {
-  if (query.length < 2) return [];
+// ── SEARCH (email only, but shows dropdown of all on focus) ──
+function getDropdownItems() {
+  var all = getAllAccounts().filter(function(a){ return !isAlreadyAdded(a.email); });
+  if (query.length < 1) return all;
   var q = query.toLowerCase();
-  var results = [];
-  companies.forEach(function(co) {
-    co.contacts.forEach(function(c) {
-      if (c.name.toLowerCase().indexOf(q) > -1 ||
-          c.email.toLowerCase().indexOf(q) > -1 ||
-          co.name.toLowerCase().indexOf(q) > -1) {
-        if (!isAlreadyAdded(c.email)) {
-          results.push({ id: c.id, name: c.name, email: c.email, initials: c.initials, company: co.name, country: co.country });
-        }
-      }
-    });
-  });
-  return results;
+  return all.filter(function(a){ return a.email.toLowerCase().indexOf(q) > -1; });
 }
 
 // ── ACTIONS ──
 function addSupplier(contactId) {
-  var result = null;
-  companies.forEach(function(co) {
-    co.contacts.forEach(function(c) {
-      if (c.id === contactId) result = { id: c.id, name: c.name, email: c.email, initials: c.initials, company: co.name, isNew: false };
-    });
-  });
-  if (result && !isAlreadyAdded(result.email)) {
-    eventSuppliers.push(result);
-    lastAddedId = result.id;
-    query = '';
+  var all = getAllAccounts();
+  var r = all.find(function(a){ return a.id === contactId; });
+  if (r && !isAlreadyAdded(r.email)) {
+    eventSuppliers.push({ id: r.id, name: r.name, email: r.email, initials: r.initials, company: r.company, isNew: false });
+    lastAddedId = r.id;
+    query = ''; dropdownOpen = false;
     draw();
     setTimeout(function() { lastAddedId = null; }, 600);
     var si = document.getElementById('search-input');
@@ -229,16 +244,29 @@ function addSupplier(contactId) {
   }
 }
 
-function removeSupplier(idx) {
-  eventSuppliers.splice(idx, 1);
-  draw();
+function removeSupplier(idx) { eventSuppliers.splice(idx, 1); draw(); }
+
+function copyEventLink(idx) {
+  var s = eventSuppliers[idx];
+  if (!s || !s.inviteToken) return;
+  var link = 'https://app.crown.com/invite/' + s.inviteToken + '?role=supplier&company=' + encodeURIComponent(s.company);
+  navigator.clipboard.writeText(link).then(function() {
+    var btn = document.getElementById('ev-copy-' + idx);
+    if (btn) { btn.textContent = 'Copied!'; btn.className = 'added-copy copied'; }
+    setTimeout(function() {
+      var btn = document.getElementById('ev-copy-' + idx);
+      if (btn) { btn.textContent = 'Copy link'; btn.className = 'added-copy'; }
+    }, 2000);
+  });
 }
 
 function openInvitePanel() {
-  showInvitePanel = true;
-  invNewCoMode = false; invCoId = ''; invNewCoName = ''; invNewCoCountry = '';
+  showInvitePanel = true; dropdownOpen = false;
+  invCoQuery = ''; invCoDropdownOpen = false; invSelectedCo = null;
+  invNewCoMode = false; invNewCoName = '';
   invName = ''; invEmail = query.indexOf('@') > -1 ? query : '';
-  invBuyer = ''; invSending = false; invDone = false; invToken = ''; emailTouched = false;
+  invBuyer = ''; invSending = false; invDone = false; invToken = '';
+  emailTouched = false; query = '';
   draw();
 }
 
@@ -249,10 +277,41 @@ function closeInvitePanel() {
   if (si) si.focus();
 }
 
-function toggleNewCoMode() {
-  invNewCoMode = !invNewCoMode;
-  invCoId = ''; invNewCoName = ''; invNewCoCountry = '';
+function selectInvCo(id, name) {
+  invSelectedCo = { id: id, name: name };
+  invCoDropdownOpen = false; invCoQuery = ''; invNewCoMode = false;
   draw();
+}
+
+function clearInvCo() {
+  invSelectedCo = null; invNewCoMode = false; invCoQuery = '';
+  draw();
+}
+
+function startNewCoMode() {
+  invNewCoMode = true; invSelectedCo = null; invNewCoName = invCoQuery;
+  invCoDropdownOpen = false;
+  draw();
+}
+
+function cancelNewCoMode() {
+  invNewCoMode = false; invNewCoName = '';
+  draw();
+}
+
+function getInvCoResults() {
+  if (invCoQuery.length < 1) return companies;
+  var q = invCoQuery.toLowerCase();
+  return companies.filter(function(c){ return c.name.toLowerCase().indexOf(q) > -1; });
+}
+
+function canSubmitInvite() {
+  if (!isValidEmail(invEmail)) return false;
+  if (!invSelectedCo && !invNewCoMode) return false;
+  if (invNewCoMode && !invNewCoName.trim()) return false;
+  if (role === 'admin' && invNewCoMode && !invBuyer) return false;
+  if (isAlreadyAdded(invEmail)) return false;
+  return true;
 }
 
 function submitInvite() {
@@ -260,7 +319,7 @@ function submitInvite() {
   setTimeout(function() {
     invSending = false;
     invToken = Math.random().toString(36).substr(2, 12);
-    var coName = invNewCoMode ? invNewCoName : (companies.find(function(c){return c.id==invCoId;}) || {}).name || 'Unknown';
+    var coName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : 'Unknown');
     eventSuppliers.push({
       id: 'inv-' + invToken,
       name: invName || invEmail,
@@ -271,24 +330,14 @@ function submitInvite() {
       inviteToken: invToken
     });
     invDone = true;
-    query = '';
     lastAddedId = 'inv-' + invToken;
     draw();
     setTimeout(function() { lastAddedId = null; }, 600);
   }, 1000);
 }
 
-function canSubmitInvite() {
-  if (!isValidEmail(invEmail)) return false;
-  if (invNewCoMode && !invNewCoName.trim()) return false;
-  if (!invNewCoMode && !invCoId) return false;
-  if (role === 'admin' && (invNewCoMode) && !invBuyer) return false;
-  if (isAlreadyAdded(invEmail)) return false;
-  return true;
-}
-
 function copyInvLink() {
-  var coName = invNewCoMode ? invNewCoName : (companies.find(function(c){return c.id==invCoId;}) || {}).name || '';
+  var coName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : '');
   var link = 'https://app.crown.com/invite/' + invToken + '?role=supplier&company=' + encodeURIComponent(coName);
   navigator.clipboard.writeText(link).then(function() {
     var btn = document.getElementById('copy-inv-btn');
@@ -308,15 +357,21 @@ function switchRole(r) {
   draw();
 }
 
-// ── SEARCH INPUT (debounced) ──
+// ── INPUT HANDLERS ──
 var searchTimer = null;
 function setQuery(v) {
-  query = v;
+  query = v; dropdownOpen = true;
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(function() { draw(); }, 120);
+  searchTimer = setTimeout(function() { draw(); }, 100);
 }
 
-// ── FOCUS SAVE/RESTORE ──
+function setInvCoQuery(v) {
+  invCoQuery = v; invCoDropdownOpen = true;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() { draw(); }, 100);
+}
+
+// ── FOCUS ──
 function saveFocus() {
   var el = document.activeElement;
   if (!el || !el.id) return null;
@@ -332,15 +387,23 @@ function restoreFocus(info) {
   }
 }
 
+// Close dropdown on outside click
+document.addEventListener('mousedown', function(e) {
+  if (!e.target.closest('.search-wrap') && !e.target.closest('.dropdown')) {
+    if (dropdownOpen) { dropdownOpen = false; draw(); }
+  }
+  if (!e.target.closest('.co-search-wrap') && !e.target.closest('.co-dropdown')) {
+    if (invCoDropdownOpen) { invCoDropdownOpen = false; draw(); }
+  }
+});
+
 // ── DRAW ──
 function draw() {
   var focusInfo = saveFocus();
   var isAdmin = role === 'admin';
-  var results = searchResults();
-  var hasQuery = query.length >= 2;
+  var items = getDropdownItems();
   var h = '';
 
-  // Buyer info
   if (!isAdmin) {
     h += '<div class="infobox">Adding suppliers on behalf of <strong>Bonduelle</strong>.</div>';
   }
@@ -348,89 +411,113 @@ function draw() {
   // ─── SEARCH CARD ───
   h += '<div class="card">';
   h += '<div class="ctitle">Search & add suppliers</div>';
-  h += '<div class="csub">Paste an email address or type a name to find existing suppliers. Add them to the event with one click.</div>';
+  h += '<div class="csub">Paste a supplier email address to find them, or click the field to browse all accounts.</div>';
 
   h += '<div class="search-row">';
-  h += '<input class="sinput" id="search-input" placeholder="Paste email or search by name / company..." value="' + esc(query) + '" oninput="setQuery(this.value)" />';
-  h += '<button class="btn btn-s btn-sm" onclick="openInvitePanel()">+ Create company</button>';
-  h += '</div>';
+  h += '<div class="search-wrap">';
+  h += '<input class="sinput" id="search-input" placeholder="Paste supplier email address..." value="' + esc(query) + '" oninput="setQuery(this.value)" onfocus="dropdownOpen=true;draw()" autocomplete="off" />';
 
-  // Results
-  if (hasQuery && results.length > 0) {
-    h += '<div class="results">';
-    h += '<div class="results-title">' + results.length + ' supplier' + (results.length !== 1 ? 's' : '') + ' found</div>';
-    h += '<div class="rlist">';
-    results.forEach(function(r) {
-      h += '<div class="ritem">';
-      h += '<div class="ritem-info">';
-      h += '<div class="ravatar">' + r.initials + '</div>';
-      h += '<div class="ritem-text">';
-      h += '<div class="ritem-name">' + esc(r.name) + '</div>';
-      h += '<div class="ritem-detail">' + esc(r.email) + '</div>';
-      h += '<div class="ritem-co">' + esc(r.company) + ' \u00B7 ' + esc(r.country) + '</div>';
-      h += '</div></div>';
-      h += '<button class="btn btn-add" onclick="addSupplier(' + r.id + ')">+ Add</button>';
-      h += '</div>';
-    });
-    h += '</div></div>';
-  } else if (hasQuery && results.length === 0) {
-    h += '<div class="warn-inline">';
-    h += '<div><strong>No supplier found</strong> matching \u201C' + esc(query) + '\u201D</div>';
-    if (!showInvitePanel) {
-      h += '<button class="btn btn-p btn-sm" onclick="openInvitePanel()">Invite new supplier \u2192</button>';
+  // Dropdown
+  if (dropdownOpen && !showInvitePanel) {
+    h += '<div class="dropdown">';
+    if (items.length > 0) {
+      h += '<div class="dd-title">' + items.length + ' supplier account' + (items.length !== 1 ? 's' : '') + '</div>';
+      items.forEach(function(a) {
+        h += '<div class="dd-item" onmousedown="event.preventDefault();addSupplier(' + a.id + ')">';
+        h += '<div class="dd-item-left">';
+        h += '<div class="dd-avatar">' + a.initials + '</div>';
+        h += '<div><div class="dd-name">' + esc(a.name) + '</div>';
+        h += '<div class="dd-email">' + esc(a.email) + '</div></div>';
+        h += '</div>';
+        h += '<div class="dd-co">' + esc(a.company) + '</div>';
+        h += '</div>';
+      });
+    } else {
+      h += '<div class="dd-empty">No account matches \u201C' + esc(query) + '\u201D</div>';
     }
+    h += '</div>';
+  }
+  h += '</div>'; // search-wrap
+
+  h += '<button class="btn btn-invite" onclick="openInvitePanel()">+ Invite a new supplier</button>';
+  h += '</div>'; // search-row
+
+  // No results warning (when typing but dropdown closed or no match)
+  if (query.length >= 2 && items.length === 0 && !dropdownOpen && !showInvitePanel) {
+    h += '<div class="warn-inline">';
+    h += '<div><strong>No account found</strong> for \u201C' + esc(query) + '\u201D</div>';
+    h += '<button class="btn btn-p btn-sm" onclick="openInvitePanel()">Invite new supplier \u2192</button>';
     h += '</div>';
   }
 
   // ─── INVITE PANEL ───
   if (showInvitePanel) {
     h += '<div class="invite-panel">';
+
     if (invDone) {
-      // Success state
       h += '<div class="invite-panel-title">Invitation link ready <button class="invite-close" onclick="closeInvitePanel()">\u2715</button></div>';
       h += '<div style="font-size:12px;color:#555;margin-bottom:10px;">Share this link with <strong>' + esc(invEmail) + '</strong> to invite them.</div>';
-      var coName = invNewCoMode ? invNewCoName : (companies.find(function(c){return c.id==invCoId;}) || {}).name || '';
+      var doneCoName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : '');
       h += '<div class="link-result">';
-      h += '<span class="link-result-url">https://app.crown.com/invite/' + invToken + '?role=supplier&company=' + encodeURIComponent(coName) + '</span>';
+      h += '<span class="link-result-url">https://app.crown.com/invite/' + invToken + '?role=supplier&company=' + encodeURIComponent(doneCoName) + '</span>';
       h += '<button class="copy-btn" id="copy-inv-btn" onclick="copyInvLink()">Copy link</button>';
       h += '</div>';
       h += '<div style="margin-top:12px;text-align:right;">';
       h += '<button class="btn btn-s btn-sm" onclick="closeInvitePanel()">Done \u2014 continue adding</button>';
       h += '</div>';
     } else {
-      // Form state
       h += '<div class="invite-panel-title">Invite a new supplier <button class="invite-close" onclick="closeInvitePanel()">\u2715</button></div>';
 
-      // Company selection
-      if (!invNewCoMode) {
-        h += '<div class="fg"><label class="flabel">Supplier company</label>';
-        h += '<select class="fselect" id="inv-co-select" onchange="invCoId=this.value;draw()">';
-        h += '<option value="">Select existing company...</option>';
-        companies.forEach(function(co) {
-          h += '<option value="' + co.id + '"' + (invCoId == co.id ? ' selected' : '') + '>' + esc(co.name) + '</option>';
-        });
-        h += '</select></div>';
-        h += '<button style="background:none;border:none;color:#1E8A3A;font-size:11px;font-weight:700;cursor:pointer;margin-top:-6px;margin-bottom:12px;font-family:inherit;" onclick="toggleNewCoMode()">+ Create a new company instead</button>';
-      } else {
-        h += '<div class="fg2">';
-        h += '<div class="fg"><label class="flabel">New company name</label><input class="finput" id="inv-co-name" placeholder="Legal company name" value="' + esc(invNewCoName) + '" oninput="invNewCoName=this.value" /></div>';
-        h += '<div class="fg"><label class="flabel">Country</label><input class="finput" id="inv-co-country" placeholder="Country" value="' + esc(invNewCoCountry) + '" oninput="invNewCoCountry=this.value" /></div>';
+      // ── STEP 1: Company ──
+      h += '<div class="invite-step">1. Supplier company</div>';
+
+      if (invSelectedCo) {
+        // Company selected
+        h += '<div class="co-selected">' + esc(invSelectedCo.name) + ' <button class="co-selected-clear" onclick="clearInvCo()" title="Change">\u2715</button></div>';
+      } else if (invNewCoMode) {
+        // Creating new company
+        h += '<div class="new-co-box">';
+        h += '<div class="new-co-title">New supplier company</div>';
+        h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="inv-co-name" placeholder="Company name" value="' + esc(invNewCoName) + '" oninput="invNewCoName=this.value" /></div>';
+        h += '<button style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;font-family:inherit;" onclick="cancelNewCoMode()">\u2190 Search existing companies</button>';
         h += '</div>';
-        h += '<button style="background:none;border:none;color:#1E8A3A;font-size:11px;font-weight:700;cursor:pointer;margin-top:-6px;margin-bottom:12px;font-family:inherit;" onclick="toggleNewCoMode()">\u2190 Select existing company</button>';
+
+        // Buyer assignment (admin only for new company)
+        if (isAdmin) {
+          h += '<div class="fg"><label class="flabel">Assign to buyer company</label>';
+          h += '<select class="fselect" id="inv-buyer" onchange="invBuyer=this.value">';
+          h += '<option value="">Select buyer...</option>';
+          buyers.forEach(function(b) { h += '<option value="' + b + '"' + (invBuyer === b ? ' selected' : '') + '>' + b + '</option>'; });
+          h += '</select></div>';
+        }
+      } else {
+        // Search for company
+        h += '<div class="co-search-wrap">';
+        h += '<input class="co-sinput" id="inv-co-search" placeholder="Search for a supplier company..." value="' + esc(invCoQuery) + '" oninput="setInvCoQuery(this.value)" onfocus="invCoDropdownOpen=true;draw()" autocomplete="off" />';
+
+        if (invCoDropdownOpen) {
+          var coResults = getInvCoResults();
+          h += '<div class="co-dropdown">';
+          if (coResults.length > 0) {
+            coResults.forEach(function(co) {
+              h += '<div class="co-dd-item" onmousedown="event.preventDefault();selectInvCo(' + co.id + ',\'' + esc(co.name).replace(/'/g, "\\'") + '\')">' + esc(co.name) + '</div>';
+            });
+          } else {
+            h += '<div class="co-dd-empty">No company found</div>';
+          }
+          h += '</div>';
+        }
+        h += '</div>';
+
+        // Create company button — always visible
+        h += '<button class="create-co-btn" onclick="startNewCoMode()"><span style="font-size:18px;">+</span> Create a new supplier company</button>';
       }
 
-      // Buyer assignment (admin + new company only)
-      if (isAdmin && invNewCoMode) {
-        h += '<div class="fg"><label class="flabel">Assign to buyer company</label>';
-        h += '<select class="fselect" id="inv-buyer" onchange="invBuyer=this.value;draw()">';
-        h += '<option value="">Select buyer...</option>';
-        buyers.forEach(function(b) { h += '<option value="' + b + '"' + (invBuyer === b ? ' selected' : '') + '>' + b + '</option>'; });
-        h += '</select></div>';
-      }
-
-      // Contact details
+      // ── STEP 2: Contact ──
+      h += '<div class="divider"></div>';
+      h += '<div class="invite-step">2. Supplier account</div>';
       h += '<div class="fg2">';
-      h += '<div class="fg"><label class="flabel">Contact name</label><input class="finput" id="inv-name" placeholder="Jane Smith" value="' + esc(invName) + '" oninput="invName=this.value" /></div>';
+      h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="inv-name" placeholder="Jane Smith" value="' + esc(invName) + '" oninput="invName=this.value" /></div>';
       var emailInvalid = emailTouched && invEmail && !isValidEmail(invEmail);
       h += '<div class="fg"><label class="flabel">Email address</label><input class="finput' + (emailInvalid ? ' invalid' : '') + '" id="inv-email" type="email" placeholder="jane@supplier.com" value="' + esc(invEmail) + '" oninput="invEmail=this.value;emailTouched=true" /></div>';
       h += '</div>';
@@ -454,7 +541,7 @@ function draw() {
   h += '</div>';
 
   if (eventSuppliers.length === 0) {
-    h += '<div class="empty-state">No suppliers added yet. Use the search bar above to find and add suppliers.</div>';
+    h += '<div class="empty-state">No suppliers added yet. Search by email above or invite a new supplier.</div>';
   } else {
     h += '<div class="added-list">';
     eventSuppliers.forEach(function(s, idx) {
@@ -465,8 +552,13 @@ function draw() {
       h += '<div class="added-name">' + esc(s.name) + '</div>';
       h += '<div class="added-detail">' + esc(s.email) + ' \u00B7 ' + esc(s.company) + '</div>';
       h += '</div>';
-      h += '<span class="added-badge ' + (s.isNew ? 'pending' : 'existing') + '">' + (s.isNew ? 'Invite pending' : 'Added') + '</span>';
+      h += '<span class="added-badge ' + (s.isNew ? 'pending' : 'existing') + '">' + (s.isNew ? 'Pending' : 'Added') + '</span>';
+      h += '<div class="added-actions">';
+      if (s.isNew && s.inviteToken) {
+        h += '<button class="added-copy" id="ev-copy-' + idx + '" onclick="copyEventLink(' + idx + ')">Copy link</button>';
+      }
       h += '<button class="added-remove" onclick="removeSupplier(' + idx + ')" title="Remove">\u2715</button>';
+      h += '</div>';
       h += '</div>';
     });
     h += '</div>';
