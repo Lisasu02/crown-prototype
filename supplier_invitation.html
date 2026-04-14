@@ -38,7 +38,7 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 .sinput:focus { border-color: #1E8A3A; background: #fff; }
 .search-hint { font-size: 11px; color: #BBB; margin-top: 6px; }
 
-.rlist { border: 1px solid #E0DDD6; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+.rlist { border: 1px solid #E0DDD6; border-radius: 8px; overflow-y: auto; margin-top: 10px; max-height: 320px; }
 .ritem { padding: 12px 14px; border-bottom: 1px solid #F0EDE8; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.1s; }
 .ritem:last-child { border-bottom: none; }
 .ritem:hover { background: #F5FBF6; }
@@ -181,7 +181,28 @@ var companies = [
   },
   { id:3, name:'Global Logistics SA', country:'Spain',
     contacts:[]
-  }
+  },
+  { id:4, name:'Maersk', country:'Denmark',
+    contacts:[
+      {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ'},
+      {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA'},
+      {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN'}
+    ]
+  },
+  { id:5, name:'Cargill', country:'United States', contacts:[{id:51, name:'Mike Ross', email:'m.ross@cargill.com', initials:'MR'}] },
+  { id:6, name:'BASF', country:'Germany', contacts:[{id:61, name:'Anna Weber', email:'a.weber@basf.de', initials:'AW'},{id:62, name:'Klaus Schmidt', email:'k.schmidt@basf.de', initials:'KS'}] },
+  { id:7, name:'Nestl\u00E9', country:'Switzerland', contacts:[{id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB'}] },
+  { id:8, name:'Unilever', country:'Netherlands', contacts:[{id:81, name:'Jan de Vries', email:'j.devries@unilever.com', initials:'JV'},{id:82, name:'Emma Bakker', email:'e.bakker@unilever.com', initials:'EB'}] },
+  { id:9, name:'Danone', country:'France', contacts:[{id:91, name:'Claire Dubois', email:'c.dubois@danone.com', initials:'CD'}] },
+  { id:10, name:'Bayer', country:'Germany', contacts:[] },
+  { id:11, name:'Syngenta', country:'Switzerland', contacts:[{id:111, name:'Marco Rossi', email:'m.rossi@syngenta.com', initials:'MR'}] },
+  { id:12, name:'ADM (Archer Daniels Midland)', country:'United States', contacts:[{id:121, name:'Sarah Miller', email:'s.miller@adm.com', initials:'SM'},{id:122, name:'Tom Brown', email:'t.brown@adm.com', initials:'TB'}] },
+  { id:13, name:'Louis Dreyfus Company', country:'France', contacts:[{id:131, name:'Jean Moreau', email:'j.moreau@ldc.com', initials:'JM'}] },
+  { id:14, name:'Olam International', country:'Singapore', contacts:[] },
+  { id:15, name:'Barry Callebaut', country:'Switzerland', contacts:[{id:151, name:'Lukas M\u00FCller', email:'l.muller@barry-callebaut.com', initials:'LM'}] },
+  { id:16, name:'Kerry Group', country:'Ireland', contacts:[{id:161, name:'Liam Murphy', email:'l.murphy@kerry.com', initials:'LM'},{id:162, name:'Aoife Kelly', email:'a.kelly@kerry.com', initials:'AK'}] },
+  { id:17, name:'DSM-Firmenich', country:'Netherlands', contacts:[{id:171, name:'Daan Jansen', email:'d.jansen@dsm.com', initials:'DJ'}] },
+  { id:18, name:'Symrise', country:'Germany', contacts:[{id:181, name:'Felix Wagner', email:'f.wagner@symrise.com', initials:'FW'}] }
 ];
 var buyers = ['Bonduelle','Safran','Kiabi'];
 
@@ -234,6 +255,13 @@ function reset() {
 
 function go(s) { step = s; draw(); }
 
+function goNext() {
+  if (step === 1) {
+    go(2);
+  }
+}
+
+
 function goStep(s) {
   if (s < step) { step = s; draw(); }
 }
@@ -285,8 +313,7 @@ function isExistingContact() { return !!selContact; }
 
 function simulateSend() {
   sending = true; draw();
-  var isAdmin = role === 'admin';
-  var reviewStep = isAdmin ? 3 : 2;
+  var reviewStep = needsBuyerStep() ? 3 : 2;
   var delay = isExistingContact() ? 600 : 1200;
   setTimeout(function() {
     sending = false;
@@ -342,42 +369,32 @@ function stepsHtml(labels, cur) {
 }
 
 function searchHtml(canCreateNew) {
-  var h = '<input class="sinput" id="search-input" placeholder="Start typing a company name to search..." value="'+escHtml(query)+'" oninput="setQuery(this.value)" />';
+  var h = '<div style="display:flex;gap:10px;align-items:center;">';
+  h += '<input class="sinput" id="search-input" style="flex:1;" placeholder="Search supplier companies..." value="'+escHtml(query)+'" oninput="setQuery(this.value)" />';
+  h += '<button class="btn btn-s" style="white-space:nowrap;flex-shrink:0;padding:10px 16px;font-size:12px;" onclick="startNewCo()">+ Create company</button>';
+  h += '</div>';
 
-  if (query.length < 2) {
+  var list = query.length < 2 ? companies : companies.filter(function(c){return c.name.toLowerCase().indexOf(query.toLowerCase())>-1;});
+
+  if (list.length > 0) {
     h += '<div class="recent-section">';
-    h += '<div class="recent-title">Recent suppliers</div>';
+    if (query.length < 2) {
+      h += '<div class="recent-title">Supplier companies <span style="font-weight:400;color:#CCC;">('+companies.length+')</span></div>';
+    } else {
+      h += '<div class="recent-title">'+list.length+' result'+(list.length!==1?'s':'')+'</div>';
+    }
     h += '<div class="rlist">';
-    companies.slice(0,3).forEach(function(c) {
-      h += '<div class="ritem" onclick="pickCo('+c.id+')">';
-      h += '<div><div class="rname">'+escHtml(c.name)+'</div>';
-      h += '<div class="rmeta">'+escHtml(c.country)+'</div></div>';
-      h += '<div style="display:flex;align-items:center;gap:6px;">';
-      h += '<span class="rbadge-count">'+c.contacts.length+' contact'+(c.contacts.length!==1?'s':'')+'</span>';
-      h += '</div></div>';
-    });
-    h += '</div></div>';
-    return h;
-  }
-
-  var f = companies.filter(function(c){return c.name.toLowerCase().indexOf(query.toLowerCase())>-1;});
-  if (f.length > 0) {
-    h += '<div class="rlist">';
-    f.forEach(function(c) {
+    list.forEach(function(c) {
       h += '<div class="ritem'+(selCo&&selCo.id===c.id?' sel':'')+'" onclick="pickCo('+c.id+')">';
       h += '<div><div class="rname">'+escHtml(c.name)+'</div>';
       h += '<div class="rmeta">'+escHtml(c.country)+'</div></div>';
       h += '<div style="display:flex;align-items:center;gap:6px;">';
-      h += '<span class="rbadge-count">'+c.contacts.length+' contact'+(c.contacts.length!==1?'s':'')+'</span>';
-      h += '<span class="rbadge">Existing</span>';
+      h += '<span class="rbadge-count">'+c.contacts.length+' account'+(c.contacts.length!==1?'s':'')+'</span>';
       h += '</div></div>';
     });
-    h += '</div>';
-    if (canCreateNew) h += '<button class="newbtn" onclick="startNewCo()">+ None of these match \u2014 create new company</button>';
+    h += '</div></div>';
   } else {
     h += '<div class="warn">\u26A0 No company found matching \u201C'+escHtml(query)+'\u201D.</div>';
-    if (canCreateNew) h += '<button class="newbtn" onclick="startNewCo()">+ Create \u201C'+escHtml(query)+'\u201D as a new supplier company</button>';
-    else h += '<p style="font-size:12px;color:#888;margin-top:8px;">Please contact your admin to add this company.</p>';
   }
   return h;
 }
@@ -386,7 +403,7 @@ function contactsHtml() {
   if (!selCo) return '';
   var h = '<div class="contact-section">';
   h += '<div class="divider"></div>';
-  h += '<div class="contact-section-title">Contacts at '+escHtml(selCo.name)+'</div>';
+  h += '<div class="contact-section-title">Supplier accounts at '+escHtml(selCo.name)+'</div>';
   if (selCo.contacts.length > 0) {
     selCo.contacts.forEach(function(c) {
       var isSel = selContact && selContact.id === c.id;
@@ -398,14 +415,14 @@ function contactsHtml() {
       h += '<div class="citem-check">'+(isSel?'&#10003;':'')+'</div></div>';
     });
   } else {
-    h += '<div class="empty-contacts">No contacts registered yet \u2014 add one below to send the invitation.</div>';
+    h += '<div class="empty-contacts">No supplier accounts registered yet \u2014 add one below.</div>';
   }
   h += '<div class="divider" style="margin:12px 0;"></div>';
-  h += '<button class="newbtn" onclick="toggleAddNew()" style="padding-top:0;">'+(addingNew?'\u2212 Cancel':'+ Invite a new contact at this company')+'</button>';
+  h += '<button class="newbtn" onclick="toggleAddNew()" style="padding-top:0;">'+(addingNew?'\u2212 Cancel':'+ Add a new supplier account')+'</button>';
   if (addingNew) {
     var emailInvalid = emailTouched && newEmail && !isValidEmail(newEmail);
     h += '<div class="new-contact-box">';
-    h += '<div class="new-contact-title">New contact details</div>';
+    h += '<div class="new-contact-title">New supplier account</div>';
     h += '<div class="fg2">';
     h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="contact-name" placeholder="Jane Smith" value="'+escHtml(newName)+'" oninput="newName=this.value" /></div>';
     h += '<div class="fg"><label class="flabel">Email address</label><input class="finput'+(emailInvalid?' invalid':'')+'" id="contact-email" type="email" placeholder="jane@supplier.com" value="'+escHtml(newEmail)+'" oninput="newEmail=this.value;emailTouched=true;updateBtnState()" /></div>';
@@ -461,13 +478,32 @@ function updateBtnState() {
   if (buyerBtn) buyerBtn.disabled = !buyerCo;
 }
 
+function needsBuyerStep() {
+  return role === 'admin' && (newCo || addingNew);
+}
+
 function draw() {
   var focusInfo = saveFocus();
   var isAdmin = role === 'admin';
   var existing = isExistingContact();
-  var lastLabel = existing ? 'Review & add' : 'Review & generate';
-  var labels = isAdmin ? ['Find company','Assign buyer',lastLabel] : ['Find company',lastLabel];
-  var reviewStep = isAdmin ? 3 : 2;
+  var showBuyer = needsBuyerStep();
+
+  // Dynamic steps based on context
+  var labels, reviewStep;
+  if (isAdmin && showBuyer) {
+    var lastLabel = 'Review & generate';
+    labels = ['Find company','Assign buyer',lastLabel];
+    reviewStep = 3;
+  } else if (isAdmin) {
+    var lastLabel = existing ? 'Review & add' : 'Review & generate';
+    labels = ['Find company',lastLabel];
+    reviewStep = 2;
+  } else {
+    var lastLabel = existing ? 'Review & add' : 'Review & generate';
+    labels = ['Find company',lastLabel];
+    reviewStep = 2;
+  }
+
   var h = stepsHtml(labels, step);
 
   if (!isAdmin) {
@@ -482,21 +518,22 @@ function draw() {
     h += searchHtml(true);
     if (selCo) h += contactsHtml();
     if (newCo) h += newCoFormHtml();
-    h += '<div class="btnrow"><button class="btn btn-p" id="continue-btn" '+(canProceed()?'':'disabled')+' onclick="go(2)">Continue \u2192<span class="kbd-hint">\u23CE</span></button></div>';
+    var nextStep = (canProceed() && needsBuyerStep()) ? 2 : 2;
+    h += '<div class="btnrow"><button class="btn btn-p" id="continue-btn" '+(canProceed()?'':'disabled')+' onclick="goNext()">Continue \u2192<span class="kbd-hint">\u23CE</span></button></div>';
     h += '</div>';
   }
 
-  // STEP 2 — admin: assign buyer
-  if (isAdmin && step === 2) {
+  // STEP 2 — admin: assign buyer (only for new company/account)
+  if (showBuyer && step === 2) {
     h += '<div class="card">';
     h += '<div class="ctitle">Assign to a buyer company</div>';
-    h += '<div class="csub">Select which client this supplier is being invited on behalf of.</div>';
+    h += '<div class="csub">Select which buyer company this new supplier will be linked to.</div>';
     h += '<div class="fg"><label class="flabel">Buyer company</label>';
     h += '<select class="fselect" id="buyer-select" onchange="setBuyer(this.value)">';
     h += '<option value="">Select a buyer company...</option>';
     buyers.forEach(function(b){ h += '<option value="'+b+'"'+(buyerCo===b?' selected':'')+'>'+b+'</option>'; });
     h += '</select></div>';
-    h += '<div class="infobox" style="margin-top:14px;">\u2139\uFE0F A supplier can be linked to multiple buyer companies over time. This assignment sets the context for this invitation.</div>';
+    h += '<div class="infobox" style="margin-top:14px;">\u2139\uFE0F This assigns the buyer for the new supplier. Existing suppliers are already linked to their buyer.</div>';
     h += '<div class="btnrow"><button class="btn btn-s" onclick="go(1)">\u2190 Back</button><button class="btn btn-p" id="buyer-continue-btn" '+(buyerCo?'':'disabled')+' onclick="go(3)">Continue \u2192<span class="kbd-hint">\u23CE</span></button></div>';
     h += '</div>';
   }
@@ -504,21 +541,25 @@ function draw() {
   // REVIEW STEP
   if (step === reviewStep) {
     var coName = getCoName();
-    var backStep = isAdmin ? 2 : 1;
+    var backStep = showBuyer ? reviewStep - 1 : 1;
     h += '<div class="card">';
     if (existing) {
       h += '<div class="ctitle">Review & add supplier</div>';
-      h += '<div class="csub">This contact already has an account. They will be added directly to the event.</div>';
+      h += '<div class="csub">This supplier already has an account. They will be added directly to the event.</div>';
     } else {
       h += '<div class="ctitle">Review & generate link</div>';
-      h += '<div class="csub">This is a new contact. An invitation link will be generated for you to share via email.</div>';
+      h += '<div class="csub">This is a new supplier. An invitation link will be generated for you to share via email.</div>';
     }
     h += '<div class="srow"><span class="slbl">Supplier company</span><span class="sval">'+escHtml(coName)+(newCo?'<span class="new-tag">New</span>':'')+'</span></div>';
-    h += '<div class="srow"><span class="slbl">Buyer company</span><span class="sval">'+(isAdmin?escHtml(buyerCo):'Bonduelle <span style="font-size:11px;color:#AAA;font-weight:400;">(auto)</span>')+'</span></div>';
-    h += '<div class="srow"><span class="slbl">Contact name</span><span class="sval">'+escHtml(getName())+'</span></div>';
-    h += '<div class="srow"><span class="slbl">Contact email</span><span class="sval">'+escHtml(getEmail())+'</span></div>';
+    if (showBuyer) {
+      h += '<div class="srow"><span class="slbl">Buyer company</span><span class="sval">'+escHtml(buyerCo)+'</span></div>';
+    } else if (!isAdmin) {
+      h += '<div class="srow"><span class="slbl">Buyer company</span><span class="sval">Bonduelle <span style="font-size:11px;color:#AAA;font-weight:400;">(auto)</span></span></div>';
+    }
+    h += '<div class="srow"><span class="slbl">Supplier name</span><span class="sval">'+escHtml(getName())+'</span></div>';
+    h += '<div class="srow"><span class="slbl">Supplier email</span><span class="sval">'+escHtml(getEmail())+'</span></div>';
     if (!existing) {
-      h += '<div class="srow"><span class="slbl">Contact type</span><span class="sval" style="font-size:12px;color:#666;font-weight:500;">New contact \u2014 account will be created on signup</span></div>';
+      h += '<div class="srow"><span class="slbl">Account status</span><span class="sval" style="font-size:12px;color:#666;font-weight:500;">New \u2014 account will be created on signup</span></div>';
     }
     h += '<div class="srow"><span class="slbl">Role assigned</span><span class="stag">\u2713 Supplier</span></div>';
     if (existing) {
@@ -567,12 +608,12 @@ document.addEventListener('keydown', function(e) {
     var tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'select' || tag === 'textarea') return;
 
-    var isAdmin = role === 'admin';
-    var reviewStep = isAdmin ? 3 : 2;
+    var showBuyer = needsBuyerStep();
+    var reviewStep = showBuyer ? 3 : 2;
 
     if (step === 1 && canProceed()) {
-      e.preventDefault(); go(2);
-    } else if (isAdmin && step === 2 && buyerCo) {
+      e.preventDefault(); goNext();
+    } else if (showBuyer && step === 2 && buyerCo) {
       e.preventDefault(); go(3);
     } else if (step === reviewStep && !sending) {
       e.preventDefault(); simulateSend();
