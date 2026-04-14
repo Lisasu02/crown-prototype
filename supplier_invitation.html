@@ -357,6 +357,11 @@ function switchRole(r) {
   draw();
 }
 
+function updateInviteBtn() {
+  var btn = document.getElementById('invite-submit-btn');
+  if (btn) btn.disabled = !canSubmitInvite();
+}
+
 // ── INPUT HANDLERS ──
 var searchTimer = null;
 function setQuery(v) {
@@ -484,14 +489,14 @@ function draw() {
         // Creating new company
         h += '<div class="new-co-box">';
         h += '<div class="new-co-title">New supplier company</div>';
-        h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="inv-co-name" placeholder="Company name" value="' + esc(invNewCoName) + '" oninput="invNewCoName=this.value" /></div>';
+        h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="inv-co-name" placeholder="Company name" value="' + esc(invNewCoName) + '" oninput="invNewCoName=this.value;updateInviteBtn()" /></div>';
         h += '<button style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;font-family:inherit;" onclick="cancelNewCoMode()">\u2190 Search existing companies</button>';
         h += '</div>';
 
         // Buyer assignment (admin only for new company)
         if (isAdmin) {
           h += '<div class="fg"><label class="flabel">Assign to buyer company</label>';
-          h += '<select class="fselect" id="inv-buyer" onchange="invBuyer=this.value">';
+          h += '<select class="fselect" id="inv-buyer" onchange="invBuyer=this.value;updateInviteBtn()">';
           h += '<option value="">Select buyer...</option>';
           buyers.forEach(function(b) { h += '<option value="' + b + '"' + (invBuyer === b ? ' selected' : '') + '>' + b + '</option>'; });
           h += '</select></div>';
@@ -523,16 +528,16 @@ function draw() {
       h += '<div class="divider"></div>';
       h += '<div class="invite-step">2. Supplier account</div>';
       h += '<div class="fg2">';
-      h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="inv-name" placeholder="Jane Smith" value="' + esc(invName) + '" oninput="invName=this.value" /></div>';
+      h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="inv-name" placeholder="Jane Smith" value="' + esc(invName) + '" oninput="invName=this.value;updateInviteBtn()" /></div>';
       var emailInvalid = emailTouched && invEmail && !isValidEmail(invEmail);
-      h += '<div class="fg"><label class="flabel">Email address</label><input class="finput' + (emailInvalid ? ' invalid' : '') + '" id="inv-email" type="email" placeholder="jane@supplier.com" value="' + esc(invEmail) + '" oninput="invEmail=this.value;emailTouched=true" /></div>';
+      h += '<div class="fg"><label class="flabel">Email address</label><input class="finput' + (emailInvalid ? ' invalid' : '') + '" id="inv-email" type="email" placeholder="jane@supplier.com" value="' + esc(invEmail) + '" oninput="invEmail=this.value;emailTouched=true;updateInviteBtn()" /></div>';
       h += '</div>';
       if (emailInvalid) h += '<div class="field-error">Please enter a valid email address.</div>';
       if (isAlreadyAdded(invEmail) && invEmail) h += '<div class="field-error">This email has already been added to the event.</div>';
 
       h += '<div class="invite-actions">';
       h += '<button class="btn btn-s btn-sm" onclick="closeInvitePanel()">Cancel</button>';
-      h += '<button class="btn btn-p btn-sm' + (invSending ? ' btn-loading' : '') + '" ' + (canSubmitInvite() && !invSending ? '' : 'disabled') + ' onclick="submitInvite()">' + (invSending ? 'Generating...  ' : 'Generate invitation link') + '</button>';
+      h += '<button class="btn btn-p btn-sm' + (invSending ? ' btn-loading' : '') + '" id="invite-submit-btn" ' + (canSubmitInvite() && !invSending ? '' : 'disabled') + ' onclick="submitInvite()">' + (invSending ? 'Generating...  ' : 'Generate invitation link') + '</button>';
       h += '</div>';
     }
     h += '</div>';
