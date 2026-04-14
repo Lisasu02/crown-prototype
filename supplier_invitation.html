@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invite a Supplier — CROWN</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5F3EE; padding: 32px 20px; min-height: 100vh; }
+.wrap { max-width: 700px; margin: 0 auto; }
+
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.header-title { font-size: 20px; font-weight: 800; color: #111; }
+.crown-logo { font-size: 15px; font-weight: 800; letter-spacing: 0.1em; color: #111; }
+.crown-logo span { color: #1E8A3A; }
+
+.role-tabs { display: flex; background: #fff; border: 1px solid #E0DDD6; border-radius: 10px; padding: 4px; margin-bottom: 22px; gap: 4px; }
+.rtab { flex: 1; padding: 9px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #888; border-radius: 7px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.rtab.on { background: #1E8A3A; color: #fff; }
+
+.steps { display: flex; align-items: center; margin-bottom: 22px; }
+.sc { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #DDD; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #AAA; background: #fff; flex-shrink: 0; }
+.sc.cur { border-color: #1E8A3A; color: #1E8A3A; background: #E8F5E9; }
+.sc.don { border-color: #1E8A3A; background: #1E8A3A; color: #fff; cursor: pointer; }
+.sc.don:hover { background: #166B2D; }
+.sl { font-size: 11px; font-weight: 600; color: #AAA; margin-left: 7px; white-space: nowrap; }
+.sl.cur { color: #1E8A3A; }
+.sl.don { color: #1E8A3A; cursor: pointer; }
+.sl.don:hover { text-decoration: underline; }
+.sline { flex: 1; height: 1px; background: #E0DDD6; margin: 0 10px; }
+.sline.don { background: #1E8A3A; }
+
+.card { background: #fff; border: 1px solid #E0DDD6; border-radius: 14px; padding: 24px; margin-bottom: 14px; }
+.ctitle { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
+.csub { font-size: 12px; color: #888; margin-bottom: 20px; line-height: 1.5; }
+
+.sinput { width: 100%; padding: 10px 14px; border: 1px solid #E0DDD6; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; transition: border 0.15s; }
+.sinput:focus { border-color: #1E8A3A; background: #fff; }
+.search-hint { font-size: 11px; color: #BBB; margin-top: 6px; }
+
+.rlist { border: 1px solid #E0DDD6; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+.ritem { padding: 12px 14px; border-bottom: 1px solid #F0EDE8; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.1s; }
+.ritem:last-child { border-bottom: none; }
+.ritem:hover { background: #F5FBF6; }
+.ritem.sel { background: #E8F5E9; border-left: 3px solid #1E8A3A; }
+.rname { font-size: 13px; font-weight: 600; color: #111; }
+.rmeta { font-size: 11px; color: #888; margin-top: 2px; }
+.rbadge { font-size: 10px; font-weight: 700; background: #E8F5E9; color: #1E8A3A; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.rbadge-count { font-size: 10px; font-weight: 600; color: #888; background: #F0EDE8; padding: 2px 8px; border-radius: 999px; margin-left: 6px; white-space: nowrap; }
+
+.recent-section { margin-top: 14px; }
+.recent-title { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #BBB; margin-bottom: 8px; }
+
+.warn { background: #FFFDE7; border: 1px solid #FFD54F; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #7B5E00; margin-top: 10px; }
+.infobox { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #1B5E2F; margin-bottom: 16px; line-height: 1.5; }
+
+.newbtn { background: none; border: none; color: #1E8A3A; font-size: 12px; font-weight: 700; cursor: pointer; padding: 10px 0 4px; font-family: inherit; display: block; }
+.newbtn:hover { text-decoration: underline; }
+
+.contact-section { margin-top: 18px; }
+.contact-section-title { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+
+.citem { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; border: 1px solid #E0DDD6; border-radius: 9px; margin-bottom: 7px; cursor: pointer; transition: all 0.12s; }
+.citem:hover { border-color: #1E8A3A; background: #F5FBF6; }
+.citem.sel { border-color: #1E8A3A; background: #E8F5E9; }
+.citem-left { display: flex; align-items: center; gap: 11px; }
+.cavatar { width: 34px; height: 34px; border-radius: 50%; background: #D6EAD9; color: #1E8A3A; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.citem-name { font-size: 13px; font-weight: 600; color: #111; }
+.citem-email { font-size: 11px; color: #888; margin-top: 2px; }
+.citem-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #DDD; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; transition: all 0.12s; }
+.citem.sel .citem-check { background: #1E8A3A; border-color: #1E8A3A; color: #fff; }
+
+.divider { height: 1px; background: #E8E5E0; margin: 18px 0; }
+
+.new-contact-box { border: 1px dashed #B8D9BC; border-radius: 9px; padding: 16px; background: #FAFDF9; margin-top: 10px; }
+.new-contact-title { font-size: 12px; font-weight: 700; color: #1E8A3A; margin-bottom: 12px; }
+
+.fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.flabel { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #888; }
+.finput { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #fff; width: 100%; transition: border 0.15s; }
+.finput:focus { border-color: #1E8A3A; }
+.finput.invalid { border-color: #E53935; background: #FFF5F5; }
+.field-error { font-size: 10px; color: #E53935; margin-top: 2px; }
+.fselect { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; width: 100%; }
+
+.srow { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F0EDE8; font-size: 13px; }
+.srow:last-child { border-bottom: none; }
+.slbl { color: #888; font-size: 12px; }
+.sval { font-weight: 600; color: #111; text-align: right; }
+.stag { background: #E8F5E9; color: #1E8A3A; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.new-tag { font-size: 10px; background: #FFF3E0; color: #E65100; padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-left: 6px; }
+
+
+.btnrow { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.btn { padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+.btn-p { background: #1E8A3A; color: #fff; }
+.btn-p:hover { background: #166B2D; }
+.btn-p:disabled { opacity: 0.35; cursor: not-allowed; background: #1E8A3A; }
+.btn-s { background: #fff; color: #111; border: 1px solid #E0DDD6; }
+.btn-s:hover { background: #F5F3EE; }
+.btn-loading { position: relative; pointer-events: none; }
+.btn-loading::after { content: ''; position: absolute; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; right: 12px; top: 50%; margin-top: -7px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.success { text-align: center; padding: 32px 0; }
+.sico { width: 56px; height: 56px; border-radius: 50%; background: #1E8A3A; color: #fff; font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.stitle { font-size: 18px; font-weight: 800; color: #111; margin-bottom: 6px; }
+.ssub { font-size: 13px; color: #888; margin-bottom: 22px; line-height: 1.6; }
+.linkbox { background: #F5F3EE; border: 1px solid #E0DDD6; border-radius: 8px; padding: 12px 14px; font-size: 11px; color: #888; word-break: break-all; text-align: left; margin-bottom: 12px; font-family: monospace; line-height: 1.6; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.linkbox-url { flex: 1; word-break: break-all; }
+.copy-btn { flex-shrink: 0; padding: 6px 14px; border: 1px solid #E0DDD6; border-radius: 6px; background: #fff; font-size: 11px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+.copy-btn:hover { background: #E8F5E9; }
+.copy-btn.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
+.success-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+
+.empty-contacts { font-size: 12px; color: #AAA; font-style: italic; margin-bottom: 10px; padding: 12px; background: #F9F8F5; border-radius: 8px; border: 1px dashed #E0DDD6; }
+
+.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.confirm-box { background: #fff; border-radius: 14px; padding: 24px; max-width: 380px; width: 90%; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+.confirm-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; }
+.confirm-msg { font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.5; }
+.confirm-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+.kbd-hint { font-size: 10px; color: #CCC; margin-left: 6px; font-weight: 400; }
+
+@media (max-width: 520px) {
+  .fg2 { grid-template-columns: 1fr; gap: 8px; }
+  .btnrow { flex-direction: column; }
+  .btnrow .btn { width: 100%; text-align: center; }
+  .success-actions { flex-direction: column; align-items: stretch; }
+  .linkbox { flex-direction: column; align-items: stretch; }
+  .copy-btn { text-align: center; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-title">Invite a Supplier</div>
+    <div class="crown-logo">CR<span>&#9650;</span>WN</div>
+  </div>
+
+  <div class="role-tabs">
+    <button class="rtab on" id="tab-admin" onclick="switchRole('admin')">Admin view</button>
+    <button class="rtab" id="tab-buyer" onclick="switchRole('buyer')">Buyer view</button>
+  </div>
+
+  <div id="main"></div>
+  <div id="confirm-root"></div>
+</div>
+
+<script>
+var role = 'admin';
+var step = 1;
+var selCo = null;
+var newCo = false;
+var selContact = null;
+var addingNew = false;
+var newName = '';
+var newEmail = '';
+var newCoName = '';
+var newCoCountry = '';
+var buyerCo = '';
+var query = '';
+var sending = false;
+var inviteToken = '';
+var emailTouched = false;
+
+var companies = [
+  { id:1, name:'CROWN Procurement', country:'France',
+    contacts:[
+      {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM'},
+      {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD'}
+    ]
+  },
+  { id:2, name:'Acme Supplies', country:'Germany',
+    contacts:[
+      {id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM'}
+    ]
+  },
+  { id:3, name:'Global Logistics SA', country:'Spain',
+    contacts:[]
+  }
+];
+var buyers = ['Bonduelle','Safran','Kiabi'];
+
+function hasData() {
+  return selCo || newCo || selContact || addingNew || newName || newEmail || buyerCo || query.length > 1;
+}
+
+function switchRole(r) {
+  if (r === role) return;
+  if (hasData()) {
+    showConfirm('Switch view?', 'You have unsaved progress. Switching will reset the form.', function() {
+      role = r; step = 1; reset();
+      document.getElementById('tab-admin').className = 'rtab'+(r==='admin'?' on':'');
+      document.getElementById('tab-buyer').className = 'rtab'+(r==='buyer'?' on':'');
+      draw();
+    });
+  } else {
+    role = r; step = 1; reset();
+    document.getElementById('tab-admin').className = 'rtab'+(r==='admin'?' on':'');
+    document.getElementById('tab-buyer').className = 'rtab'+(r==='buyer'?' on':'');
+    draw();
+  }
+}
+
+function showConfirm(title, msg, onYes) {
+  var root = document.getElementById('confirm-root');
+  root.innerHTML =
+    '<div class="confirm-overlay" onclick="closeConfirm()">' +
+    '<div class="confirm-box" onclick="event.stopPropagation()">' +
+    '<div class="confirm-title">'+escHtml(title)+'</div>' +
+    '<div class="confirm-msg">'+escHtml(msg)+'</div>' +
+    '<div class="confirm-btns">' +
+    '<button class="btn btn-s" onclick="closeConfirm()">Cancel</button>' +
+    '<button class="btn btn-p" id="confirm-yes">Continue</button>' +
+    '</div></div></div>';
+  document.getElementById('confirm-yes').onclick = function() { closeConfirm(); onYes(); };
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-root').innerHTML = '';
+}
+
+function reset() {
+  selCo = null; newCo = false; selContact = null;
+  addingNew = false; newName = ''; newEmail = '';
+  newCoName = ''; newCoCountry = '';
+  buyerCo = ''; query = ''; sending = false;
+  inviteToken = ''; emailTouched = false;
+}
+
+function go(s) { step = s; draw(); }
+
+function goStep(s) {
+  if (s < step) { step = s; draw(); }
+}
+
+function pickCo(id) {
+  selCo = companies.find(function(c){return c.id===id;});
+  newCo = false; selContact = null; addingNew = false; emailTouched = false; draw();
+}
+
+function startNewCo() {
+  newCo = true; newCoName = query; newCoCountry = '';
+  selCo = null; selContact = null; addingNew = false; emailTouched = false; draw();
+}
+
+function pickContact(id) {
+  selContact = selCo.contacts.find(function(c){return c.id===id;});
+  addingNew = false; newEmail = ''; newName = ''; emailTouched = false; draw();
+}
+
+function toggleAddNew() {
+  addingNew = !addingNew; selContact = null; emailTouched = false; draw();
+}
+
+var searchTimer = null;
+function setQuery(v) {
+  query = v;
+  if (selCo) { selCo = null; selContact = null; addingNew = false; }
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() { draw(); }, 150);
+}
+
+function setBuyer(v) { buyerCo = v; draw(); }
+
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+function canProceed() {
+  if (newCo && isValidEmail(newEmail)) return true;
+  if (selCo && selContact) return true;
+  if (selCo && addingNew && isValidEmail(newEmail)) return true;
+  return false;
+}
+
+function getEmail() { return selContact ? selContact.email : newEmail; }
+function getName() { return selContact ? selContact.name : (newName || '\u2014'); }
+function getCoName() { return selCo ? selCo.name : (newCoName || query || 'New company'); }
+function isExistingContact() { return !!selContact; }
+
+function simulateSend() {
+  sending = true; draw();
+  var isAdmin = role === 'admin';
+  var reviewStep = isAdmin ? 3 : 2;
+  var delay = isExistingContact() ? 600 : 1200;
+  setTimeout(function() {
+    sending = false;
+    if (!isExistingContact()) {
+      inviteToken = Math.random().toString(36).substr(2,12);
+    }
+    step = reviewStep + 1;
+    draw();
+  }, delay);
+}
+
+function copyLink() {
+  var coName = getCoName();
+  var link = 'https://app.crown.com/invite/'+inviteToken+'?role=supplier&company='+encodeURIComponent(coName);
+  navigator.clipboard.writeText(link).then(function() {
+    var btn = document.getElementById('copy-btn');
+    if (btn) { btn.textContent = 'Copied!'; btn.className = 'copy-btn copied'; }
+    setTimeout(function() {
+      var btn = document.getElementById('copy-btn');
+      if (btn) { btn.textContent = 'Copy link'; btn.className = 'copy-btn'; }
+    }, 2000);
+  });
+}
+
+function inviteAnotherSameCompany() {
+  var savedCo = selCo;
+  var savedQuery = query;
+  var savedNewCo = newCo;
+  var savedNewCoName = newCoName;
+  selContact = null; addingNew = false;
+  newName = ''; newEmail = ''; buyerCo = '';
+  sending = false; inviteToken = ''; emailTouched = false;
+  step = 1;
+  selCo = savedCo; query = savedQuery;
+  newCo = savedNewCo; newCoName = savedNewCoName;
+  draw();
+}
+
+function stepsHtml(labels, cur) {
+  var h = '<div class="steps">';
+  for (var i=0;i<labels.length;i++) {
+    var n=i+1, done=n<cur, active=n===cur;
+    if (done) {
+      h += '<div class="sc don" onclick="goStep('+n+')">&#10003;</div>';
+      h += '<div class="sl don" onclick="goStep('+n+')">'+labels[i]+'</div>';
+    } else {
+      h += '<div class="sc'+(active?' cur':'')+'">'+n+'</div>';
+      h += '<div class="sl'+(active?' cur':'')+'">'+labels[i]+'</div>';
+    }
+    if (i<labels.length-1) h += '<div class="sline'+(done?' don':'')+'"></div>';
+  }
+  return h+'</div>';
+}
+
+function searchHtml(canCreateNew) {
+  var h = '<input class="sinput" id="search-input" placeholder="Start typing a company name to search..." value="'+escHtml(query)+'" oninput="setQuery(this.value)" />';
+
+  if (query.length < 2) {
+    h += '<div class="recent-section">';
+    h += '<div class="recent-title">Recent suppliers</div>';
+    h += '<div class="rlist">';
+    companies.slice(0,3).forEach(function(c) {
+      h += '<div class="ritem" onclick="pickCo('+c.id+')">';
+      h += '<div><div class="rname">'+escHtml(c.name)+'</div>';
+      h += '<div class="rmeta">'+escHtml(c.country)+'</div></div>';
+      h += '<div style="display:flex;align-items:center;gap:6px;">';
+      h += '<span class="rbadge-count">'+c.contacts.length+' contact'+(c.contacts.length!==1?'s':'')+'</span>';
+      h += '</div></div>';
+    });
+    h += '</div></div>';
+    return h;
+  }
+
+  var f = companies.filter(function(c){return c.name.toLowerCase().indexOf(query.toLowerCase())>-1;});
+  if (f.length > 0) {
+    h += '<div class="rlist">';
+    f.forEach(function(c) {
+      h += '<div class="ritem'+(selCo&&selCo.id===c.id?' sel':'')+'" onclick="pickCo('+c.id+')">';
+      h += '<div><div class="rname">'+escHtml(c.name)+'</div>';
+      h += '<div class="rmeta">'+escHtml(c.country)+'</div></div>';
+      h += '<div style="display:flex;align-items:center;gap:6px;">';
+      h += '<span class="rbadge-count">'+c.contacts.length+' contact'+(c.contacts.length!==1?'s':'')+'</span>';
+      h += '<span class="rbadge">Existing</span>';
+      h += '</div></div>';
+    });
+    h += '</div>';
+    if (canCreateNew) h += '<button class="newbtn" onclick="startNewCo()">+ None of these match \u2014 create new company</button>';
+  } else {
+    h += '<div class="warn">\u26A0 No company found matching \u201C'+escHtml(query)+'\u201D.</div>';
+    if (canCreateNew) h += '<button class="newbtn" onclick="startNewCo()">+ Create \u201C'+escHtml(query)+'\u201D as a new supplier company</button>';
+    else h += '<p style="font-size:12px;color:#888;margin-top:8px;">Please contact your admin to add this company.</p>';
+  }
+  return h;
+}
+
+function contactsHtml() {
+  if (!selCo) return '';
+  var h = '<div class="contact-section">';
+  h += '<div class="divider"></div>';
+  h += '<div class="contact-section-title">Contacts at '+escHtml(selCo.name)+'</div>';
+  if (selCo.contacts.length > 0) {
+    selCo.contacts.forEach(function(c) {
+      var isSel = selContact && selContact.id === c.id;
+      h += '<div class="citem'+(isSel?' sel':'')+'" onclick="pickContact('+c.id+')">';
+      h += '<div class="citem-left">';
+      h += '<div class="cavatar">'+c.initials+'</div>';
+      h += '<div><div class="citem-name">'+escHtml(c.name)+'</div>';
+      h += '<div class="citem-email">'+escHtml(c.email)+'</div></div></div>';
+      h += '<div class="citem-check">'+(isSel?'&#10003;':'')+'</div></div>';
+    });
+  } else {
+    h += '<div class="empty-contacts">No contacts registered yet \u2014 add one below to send the invitation.</div>';
+  }
+  h += '<div class="divider" style="margin:12px 0;"></div>';
+  h += '<button class="newbtn" onclick="toggleAddNew()" style="padding-top:0;">'+(addingNew?'\u2212 Cancel':'+ Invite a new contact at this company')+'</button>';
+  if (addingNew) {
+    var emailInvalid = emailTouched && newEmail && !isValidEmail(newEmail);
+    h += '<div class="new-contact-box">';
+    h += '<div class="new-contact-title">New contact details</div>';
+    h += '<div class="fg2">';
+    h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="contact-name" placeholder="Jane Smith" value="'+escHtml(newName)+'" oninput="newName=this.value" /></div>';
+    h += '<div class="fg"><label class="flabel">Email address</label><input class="finput'+(emailInvalid?' invalid':'')+'" id="contact-email" type="email" placeholder="jane@supplier.com" value="'+escHtml(newEmail)+'" oninput="newEmail=this.value;emailTouched=true;updateBtnState()" /></div>';
+    h += '</div>';
+    if (emailInvalid) h += '<div class="field-error">Please enter a valid email address.</div>';
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function newCoFormHtml() {
+  var emailInvalid = emailTouched && newEmail && !isValidEmail(newEmail);
+  var h = '<div class="divider"></div>';
+  h += '<div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#888;margin-bottom:12px;">New supplier company details</div>';
+  h += '<div class="fg2">';
+  h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="newco-name" value="'+escHtml(newCoName)+'" placeholder="Legal company name" oninput="newCoName=this.value"/></div>';
+  h += '<div class="fg"><label class="flabel">Country</label><input class="finput" id="newco-country" placeholder="France" value="'+escHtml(newCoCountry)+'" oninput="newCoCountry=this.value"/></div>';
+  h += '</div>';
+  h += '<div class="fg2">';
+  h += '<div class="fg"><label class="flabel">Contact name</label><input class="finput" id="newco-contact-name" placeholder="Jane Smith" value="'+escHtml(newName)+'" oninput="newName=this.value"/></div>';
+  h += '<div class="fg"><label class="flabel">Contact email</label><input class="finput'+(emailInvalid?' invalid':'')+'" id="newco-contact-email" type="email" placeholder="jane@supplier.com" value="'+escHtml(newEmail)+'" oninput="newEmail=this.value;emailTouched=true;updateBtnState()"/></div>';
+  h += '</div>';
+  if (emailInvalid) h += '<div class="field-error">Please enter a valid email address.</div>';
+  return h;
+}
+
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function saveFocus() {
+  var el = document.activeElement;
+  if (!el || !el.id) return null;
+  return { id: el.id, start: el.selectionStart, end: el.selectionEnd };
+}
+
+function restoreFocus(info) {
+  if (!info) return;
+  var el = document.getElementById(info.id);
+  if (!el) return;
+  el.focus();
+  if (typeof el.setSelectionRange === 'function' && info.start != null) {
+    try { el.setSelectionRange(info.start, info.end); } catch(e) {}
+  }
+}
+
+function updateBtnState() {
+  var continueBtn = document.getElementById('continue-btn');
+  if (continueBtn) continueBtn.disabled = !canProceed();
+  var buyerBtn = document.getElementById('buyer-continue-btn');
+  if (buyerBtn) buyerBtn.disabled = !buyerCo;
+}
+
+function draw() {
+  var focusInfo = saveFocus();
+  var isAdmin = role === 'admin';
+  var existing = isExistingContact();
+  var lastLabel = existing ? 'Review & add' : 'Review & generate';
+  var labels = isAdmin ? ['Find company','Assign buyer',lastLabel] : ['Find company',lastLabel];
+  var reviewStep = isAdmin ? 3 : 2;
+  var h = stepsHtml(labels, step);
+
+  if (!isAdmin) {
+    h += '<div class="infobox">\u2139\uFE0F Inviting on behalf of your company: <strong>Bonduelle</strong>. The supplier will be automatically linked to your organization.</div>';
+  }
+
+  // STEP 1
+  if (step === 1) {
+    h += '<div class="card">';
+    h += '<div class="ctitle">Search for supplier company</div>';
+    h += '<div class="csub">Search the database first to avoid duplicates. Select an existing company to view its registered contacts.</div>';
+    h += searchHtml(true);
+    if (selCo) h += contactsHtml();
+    if (newCo) h += newCoFormHtml();
+    h += '<div class="btnrow"><button class="btn btn-p" id="continue-btn" '+(canProceed()?'':'disabled')+' onclick="go(2)">Continue \u2192<span class="kbd-hint">\u23CE</span></button></div>';
+    h += '</div>';
+  }
+
+  // STEP 2 — admin: assign buyer
+  if (isAdmin && step === 2) {
+    h += '<div class="card">';
+    h += '<div class="ctitle">Assign to a buyer company</div>';
+    h += '<div class="csub">Select which client this supplier is being invited on behalf of.</div>';
+    h += '<div class="fg"><label class="flabel">Buyer company</label>';
+    h += '<select class="fselect" id="buyer-select" onchange="setBuyer(this.value)">';
+    h += '<option value="">Select a buyer company...</option>';
+    buyers.forEach(function(b){ h += '<option value="'+b+'"'+(buyerCo===b?' selected':'')+'>'+b+'</option>'; });
+    h += '</select></div>';
+    h += '<div class="infobox" style="margin-top:14px;">\u2139\uFE0F A supplier can be linked to multiple buyer companies over time. This assignment sets the context for this invitation.</div>';
+    h += '<div class="btnrow"><button class="btn btn-s" onclick="go(1)">\u2190 Back</button><button class="btn btn-p" id="buyer-continue-btn" '+(buyerCo?'':'disabled')+' onclick="go(3)">Continue \u2192<span class="kbd-hint">\u23CE</span></button></div>';
+    h += '</div>';
+  }
+
+  // REVIEW STEP
+  if (step === reviewStep) {
+    var coName = getCoName();
+    var backStep = isAdmin ? 2 : 1;
+    h += '<div class="card">';
+    if (existing) {
+      h += '<div class="ctitle">Review & add supplier</div>';
+      h += '<div class="csub">This contact already has an account. They will be added directly to the event.</div>';
+    } else {
+      h += '<div class="ctitle">Review & generate link</div>';
+      h += '<div class="csub">This is a new contact. An invitation link will be generated for you to share via email.</div>';
+    }
+    h += '<div class="srow"><span class="slbl">Supplier company</span><span class="sval">'+escHtml(coName)+(newCo?'<span class="new-tag">New</span>':'')+'</span></div>';
+    h += '<div class="srow"><span class="slbl">Buyer company</span><span class="sval">'+(isAdmin?escHtml(buyerCo):'Bonduelle <span style="font-size:11px;color:#AAA;font-weight:400;">(auto)</span>')+'</span></div>';
+    h += '<div class="srow"><span class="slbl">Contact name</span><span class="sval">'+escHtml(getName())+'</span></div>';
+    h += '<div class="srow"><span class="slbl">Contact email</span><span class="sval">'+escHtml(getEmail())+'</span></div>';
+    if (!existing) {
+      h += '<div class="srow"><span class="slbl">Contact type</span><span class="sval" style="font-size:12px;color:#666;font-weight:500;">New contact \u2014 account will be created on signup</span></div>';
+    }
+    h += '<div class="srow"><span class="slbl">Role assigned</span><span class="stag">\u2713 Supplier</span></div>';
+    if (existing) {
+      h += '<div class="btnrow"><button class="btn btn-s" onclick="go('+backStep+')">\u2190 Back</button><button class="btn btn-p'+(sending?' btn-loading':'')+'" '+(sending?'disabled':'')+' onclick="simulateSend()">'+(sending?'Adding...  ':'Add supplier to event')+'</button></div>';
+    } else {
+      h += '<div class="btnrow"><button class="btn btn-s" onclick="go('+backStep+')">\u2190 Back</button><button class="btn btn-p'+(sending?' btn-loading':'')+'" '+(sending?'disabled':'')+' onclick="simulateSend()">'+(sending?'Generating...  ':'Generate invitation link')+'</button></div>';
+    }
+    h += '</div>';
+  }
+
+  // SUCCESS
+  if (step === reviewStep + 1) {
+    var coName = getCoName();
+    h += '<div class="card"><div class="success">';
+    h += '<div class="sico">\u2713</div>';
+    if (existing) {
+      h += '<div class="stitle">Supplier added to event</div>';
+      h += '<div class="ssub"><strong>'+escHtml(getName())+'</strong> ('+escHtml(getEmail())+') from <strong>'+escHtml(coName)+'</strong> has been added to the event as a supplier.</div>';
+    } else {
+      h += '<div class="stitle">Invitation link generated</div>';
+      h += '<div class="ssub">Copy the link below and share it with <strong>'+escHtml(getEmail())+'</strong>.<br>Upon signup, they will be automatically attached to <strong>'+escHtml(coName)+'</strong>.</div>';
+      h += '<div class="linkbox"><span class="linkbox-url">https://app.crown.com/invite/'+inviteToken+'?role=supplier&company='+encodeURIComponent(coName)+'</span>';
+      h += '<button class="copy-btn" id="copy-btn" onclick="copyLink()">Copy link</button></div>';
+    }
+    h += '<div class="success-actions">';
+    h += '<button class="btn btn-s" onclick="inviteAnotherSameCompany()">+ Add another from '+escHtml(coName)+'</button>';
+    h += '<button class="btn btn-s" onclick="step=1;reset();draw()">+ Add a different supplier</button>';
+    h += '</div>';
+    h += '</div></div>';
+  }
+
+  document.getElementById('main').innerHTML = h;
+
+  restoreFocus(focusInfo);
+
+  // Auto-focus search input on step 1 only if nothing was focused
+  if (!focusInfo && step === 1) {
+    var si = document.getElementById('search-input');
+    if (si && !selCo && !newCo) si.focus();
+  }
+}
+
+// Keyboard support: Enter to continue
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'select' || tag === 'textarea') return;
+
+    var isAdmin = role === 'admin';
+    var reviewStep = isAdmin ? 3 : 2;
+
+    if (step === 1 && canProceed()) {
+      e.preventDefault(); go(2);
+    } else if (isAdmin && step === 2 && buyerCo) {
+      e.preventDefault(); go(3);
+    } else if (step === reviewStep && !sending) {
+      e.preventDefault(); simulateSend();
+    }
+  }
+});
+
+draw();
+</script>
+</body>
+</html>
