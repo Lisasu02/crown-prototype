@@ -151,44 +151,42 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 </div>
 
 <script>
-// ── DATA ──
+// ── DATA (same as supplier_management — with status) ──
 var companies = [
-  { id:1, name:'CROWN Procurement', country:'France', contacts:[
-    {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM'},
-    {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD'}
+  { id:1, name:'CROWN Procurement', contacts:[
+    {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM', status:'active'},
+    {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD', status:'active'}
   ]},
-  { id:2, name:'Acme Supplies', country:'Germany', contacts:[
-    {id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM'}
+  { id:2, name:'Acme Supplies', contacts:[
+    {id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM', status:'active'}
   ]},
-  { id:3, name:'Global Logistics SA', country:'Spain', contacts:[] },
-  { id:4, name:'Maersk', country:'Denmark', contacts:[
-    {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ'},
-    {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA'},
-    {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN'}
+  { id:3, name:'Global Logistics SA', contacts:[] },
+  { id:4, name:'Maersk', contacts:[
+    {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ', status:'active'},
+    {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA', status:'pending'},
+    {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN', status:'active'}
   ]},
-  { id:5, name:'Cargill', country:'United States', contacts:[{id:51, name:'Mike Ross', email:'m.ross@cargill.com', initials:'MR'}] },
-  { id:6, name:'BASF', country:'Germany', contacts:[{id:61, name:'Anna Weber', email:'a.weber@basf.de', initials:'AW'},{id:62, name:'Klaus Schmidt', email:'k.schmidt@basf.de', initials:'KS'}] },
-  { id:7, name:'Nestl\u00E9', country:'Switzerland', contacts:[{id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB'}] },
-  { id:8, name:'Unilever', country:'Netherlands', contacts:[{id:81, name:'Jan de Vries', email:'j.devries@unilever.com', initials:'JV'},{id:82, name:'Emma Bakker', email:'e.bakker@unilever.com', initials:'EB'}] },
-  { id:9, name:'Danone', country:'France', contacts:[{id:91, name:'Claire Dubois', email:'c.dubois@danone.com', initials:'CD'}] },
-  { id:10, name:'Bayer', country:'Germany', contacts:[] },
-  { id:11, name:'Syngenta', country:'Switzerland', contacts:[{id:111, name:'Marco Rossi', email:'m.rossi@syngenta.com', initials:'MR'}] },
-  { id:12, name:'ADM (Archer Daniels Midland)', country:'United States', contacts:[{id:121, name:'Sarah Miller', email:'s.miller@adm.com', initials:'SM'},{id:122, name:'Tom Brown', email:'t.brown@adm.com', initials:'TB'}] },
-  { id:13, name:'Louis Dreyfus Company', country:'France', contacts:[{id:131, name:'Jean Moreau', email:'j.moreau@ldc.com', initials:'JM'}] },
-  { id:14, name:'Olam International', country:'Singapore', contacts:[] },
-  { id:15, name:'Barry Callebaut', country:'Switzerland', contacts:[{id:151, name:'Lukas M\u00FCller', email:'l.muller@barry-callebaut.com', initials:'LM'}] },
-  { id:16, name:'Kerry Group', country:'Ireland', contacts:[{id:161, name:'Liam Murphy', email:'l.murphy@kerry.com', initials:'LM'},{id:162, name:'Aoife Kelly', email:'a.kelly@kerry.com', initials:'AK'}] },
-  { id:17, name:'DSM-Firmenich', country:'Netherlands', contacts:[{id:171, name:'Daan Jansen', email:'d.jansen@dsm.com', initials:'DJ'}] },
-  { id:18, name:'Symrise', country:'Germany', contacts:[{id:181, name:'Felix Wagner', email:'f.wagner@symrise.com', initials:'FW'}] }
+  { id:5, name:'Cargill', contacts:[{id:51, name:'Mike Ross', email:'m.ross@cargill.com', initials:'MR', status:'active'}] },
+  { id:6, name:'BASF', contacts:[{id:61, name:'Anna Weber', email:'a.weber@basf.de', initials:'AW', status:'active'},{id:62, name:'Klaus Schmidt', email:'k.schmidt@basf.de', initials:'KS', status:'pending'}] },
+  { id:7, name:'Nestl\u00E9', contacts:[{id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB', status:'active'}] },
+  { id:8, name:'Unilever', contacts:[{id:81, name:'Jan de Vries', email:'j.devries@unilever.com', initials:'JV', status:'active'},{id:82, name:'Emma Bakker', email:'e.bakker@unilever.com', initials:'EB', status:'active'}] },
+  { id:9, name:'Danone', contacts:[{id:91, name:'Claire Dubois', email:'c.dubois@danone.com', initials:'CD', status:'active'}] },
+  { id:10, name:'Bayer', contacts:[] },
+  { id:11, name:'Syngenta', contacts:[{id:111, name:'Marco Rossi', email:'m.rossi@syngenta.com', initials:'MR', status:'active'}] },
+  { id:12, name:'ADM', contacts:[{id:121, name:'Sarah Miller', email:'s.miller@adm.com', initials:'SM', status:'active'},{id:122, name:'Tom Brown', email:'t.brown@adm.com', initials:'TB', status:'active'}] },
+  { id:13, name:'Louis Dreyfus Company', contacts:[{id:131, name:'Jean Moreau', email:'j.moreau@ldc.com', initials:'JM', status:'active'}] },
+  { id:14, name:'Olam International', contacts:[] },
+  { id:15, name:'Barry Callebaut', contacts:[{id:151, name:'Lukas M\u00FCller', email:'l.muller@barry-callebaut.com', initials:'LM', status:'active'}] },
+  { id:16, name:'Kerry Group', contacts:[{id:161, name:'Liam Murphy', email:'l.murphy@kerry.com', initials:'LM', status:'active'},{id:162, name:'Aoife Kelly', email:'a.kelly@kerry.com', initials:'AK', status:'active'}] },
+  { id:17, name:'DSM-Firmenich', contacts:[{id:171, name:'Daan Jansen', email:'d.jansen@dsm.com', initials:'DJ', status:'active'}] },
+  { id:18, name:'Symrise', contacts:[{id:181, name:'Felix Wagner', email:'f.wagner@symrise.com', initials:'FW', status:'active'}] }
 ];
-var buyers = ['Bonduelle','Safran','Kiabi'];
 
-// Flat list of all supplier accounts
 function getAllAccounts() {
   var list = [];
   companies.forEach(function(co) {
     co.contacts.forEach(function(c) {
-      list.push({ id: c.id, name: c.name, email: c.email, initials: c.initials, company: co.name });
+      list.push({ id: c.id, name: c.name, email: c.email, initials: c.initials, company: co.name, status: c.status || 'active' });
     });
   });
   return list;
@@ -199,29 +197,12 @@ var role = 'admin';
 var query = '';
 var dropdownOpen = false;
 var eventSuppliers = [];
-var showInvitePanel = false;
-// invite panel state
-var invCoQuery = '';
-var invCoDropdownOpen = false;
-var invSelectedCo = null; // { id, name }
-var invNewCoMode = false;
-var invNewCoName = '';
-var invName = '';
-var invEmail = '';
-var invBuyer = '';
-var invSending = false;
-var invDone = false;
-var invToken = '';
 var lastAddedId = null;
-var emailTouched = false;
 
 // ── HELPERS ──
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
-function getInitials(n) { var p=n.trim().split(/\s+/); return p.length>1 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase(); }
 function isAlreadyAdded(email) { return eventSuppliers.some(function(s){ return s.email.toLowerCase()===email.toLowerCase(); }); }
 
-// ── SEARCH (email only, but shows dropdown of all on focus) ──
 function getDropdownItems() {
   var all = getAllAccounts().filter(function(a){ return !isAlreadyAdded(a.email); });
   if (query.length < 1) return all;
@@ -234,7 +215,7 @@ function addSupplier(contactId) {
   var all = getAllAccounts();
   var r = all.find(function(a){ return a.id === contactId; });
   if (r && !isAlreadyAdded(r.email)) {
-    eventSuppliers.push({ id: r.id, name: r.name, email: r.email, initials: r.initials, company: r.company, isNew: false });
+    eventSuppliers.push({ id: r.id, name: r.name, email: r.email, initials: r.initials, company: r.company, status: r.status });
     lastAddedId = r.id;
     query = ''; dropdownOpen = false;
     draw();
@@ -246,109 +227,6 @@ function addSupplier(contactId) {
 
 function removeSupplier(idx) { eventSuppliers.splice(idx, 1); draw(); }
 
-function copyEventLink(idx) {
-  var s = eventSuppliers[idx];
-  if (!s || !s.inviteToken) return;
-  var link = 'https://app.crown.com/invite/' + s.inviteToken + '?role=supplier&company=' + encodeURIComponent(s.company);
-  navigator.clipboard.writeText(link).then(function() {
-    var btn = document.getElementById('ev-copy-' + idx);
-    if (btn) { btn.textContent = 'Copied!'; btn.className = 'added-copy copied'; }
-    setTimeout(function() {
-      var btn = document.getElementById('ev-copy-' + idx);
-      if (btn) { btn.textContent = 'Copy link'; btn.className = 'added-copy'; }
-    }, 2000);
-  });
-}
-
-function openInvitePanel() {
-  showInvitePanel = true; dropdownOpen = false;
-  invCoQuery = ''; invCoDropdownOpen = false; invSelectedCo = null;
-  invNewCoMode = false; invNewCoName = '';
-  invName = ''; invEmail = query.indexOf('@') > -1 ? query : '';
-  invBuyer = ''; invSending = false; invDone = false; invToken = '';
-  emailTouched = false; query = '';
-  draw();
-}
-
-function closeInvitePanel() {
-  showInvitePanel = false; invDone = false; invToken = '';
-  draw();
-  var si = document.getElementById('search-input');
-  if (si) si.focus();
-}
-
-function selectInvCo(id, name) {
-  invSelectedCo = { id: id, name: name };
-  invCoDropdownOpen = false; invCoQuery = ''; invNewCoMode = false;
-  draw();
-}
-
-function clearInvCo() {
-  invSelectedCo = null; invNewCoMode = false; invCoQuery = '';
-  draw();
-}
-
-function startNewCoMode() {
-  invNewCoMode = true; invSelectedCo = null; invNewCoName = invCoQuery;
-  invCoDropdownOpen = false;
-  draw();
-}
-
-function cancelNewCoMode() {
-  invNewCoMode = false; invNewCoName = '';
-  draw();
-}
-
-function getInvCoResults() {
-  if (invCoQuery.length < 1) return companies;
-  var q = invCoQuery.toLowerCase();
-  return companies.filter(function(c){ return c.name.toLowerCase().indexOf(q) > -1; });
-}
-
-function canSubmitInvite() {
-  if (!isValidEmail(invEmail)) return false;
-  if (!invSelectedCo && !invNewCoMode) return false;
-  if (invNewCoMode && !invNewCoName.trim()) return false;
-  if (role === 'admin' && invNewCoMode && !invBuyer) return false;
-  if (isAlreadyAdded(invEmail)) return false;
-  return true;
-}
-
-function submitInvite() {
-  invSending = true; draw();
-  setTimeout(function() {
-    invSending = false;
-    invToken = Math.random().toString(36).substr(2, 12);
-    var coName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : 'Unknown');
-    eventSuppliers.push({
-      id: 'inv-' + invToken,
-      name: invName || invEmail,
-      email: invEmail,
-      initials: invName ? getInitials(invName) : '??',
-      company: coName,
-      isNew: true,
-      inviteToken: invToken
-    });
-    invDone = true;
-    lastAddedId = 'inv-' + invToken;
-    draw();
-    setTimeout(function() { lastAddedId = null; }, 600);
-  }, 1000);
-}
-
-function copyInvLink() {
-  var coName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : '');
-  var link = 'https://app.crown.com/invite/' + invToken + '?role=supplier&company=' + encodeURIComponent(coName);
-  navigator.clipboard.writeText(link).then(function() {
-    var btn = document.getElementById('copy-inv-btn');
-    if (btn) { btn.textContent = 'Copied!'; btn.className = 'copy-btn copied'; }
-    setTimeout(function() {
-      var btn = document.getElementById('copy-inv-btn');
-      if (btn) { btn.textContent = 'Copy link'; btn.className = 'copy-btn'; }
-    }, 2000);
-  });
-}
-
 function switchRole(r) {
   if (r === role) return;
   role = r;
@@ -357,12 +235,6 @@ function switchRole(r) {
   draw();
 }
 
-function updateInviteBtn() {
-  var btn = document.getElementById('invite-submit-btn');
-  if (btn) btn.disabled = !canSubmitInvite();
-}
-
-// ── INPUT HANDLERS ──
 var searchTimer = null;
 function setQuery(v) {
   query = v; dropdownOpen = true;
@@ -370,13 +242,6 @@ function setQuery(v) {
   searchTimer = setTimeout(function() { draw(); }, 100);
 }
 
-function setInvCoQuery(v) {
-  invCoQuery = v; invCoDropdownOpen = true;
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(function() { draw(); }, 100);
-}
-
-// ── FOCUS ──
 function saveFocus() {
   var el = document.activeElement;
   if (!el || !el.id) return null;
@@ -392,19 +257,14 @@ function restoreFocus(info) {
   }
 }
 
-// Close dropdown on outside click
 var suppressFocusOpen = false;
 document.addEventListener('mousedown', function(e) {
   if (!e.target.closest('.search-wrap') && !e.target.closest('.dropdown')) {
     if (dropdownOpen) {
-      dropdownOpen = false;
-      suppressFocusOpen = true;
+      dropdownOpen = false; suppressFocusOpen = true;
       draw();
       setTimeout(function() { suppressFocusOpen = false; }, 200);
     }
-  }
-  if (!e.target.closest('.co-search-wrap') && !e.target.closest('.co-dropdown')) {
-    if (invCoDropdownOpen) { invCoDropdownOpen = false; draw(); }
   }
 });
 
@@ -419,25 +279,24 @@ function draw() {
     h += '<div class="infobox">Adding suppliers on behalf of <strong>Bonduelle</strong>.</div>';
   }
 
-  // ─── SEARCH CARD ───
   h += '<div class="card">';
   h += '<div class="ctitle">Search & add suppliers</div>';
-  h += '<div class="csub">Paste a supplier email address to find them, or click the field to browse all accounts.</div>';
+  h += '<div class="csub">Paste a supplier email address to find and add them to this event.</div>';
 
   h += '<div class="search-row">';
   h += '<div class="search-wrap">';
   h += '<input class="sinput" id="search-input" placeholder="Paste supplier email address..." value="' + esc(query) + '" oninput="setQuery(this.value)" onfocus="if(!suppressFocusOpen){dropdownOpen=true;draw()}" autocomplete="off" />';
 
-  // Dropdown
-  if (dropdownOpen && !showInvitePanel) {
+  if (dropdownOpen) {
     h += '<div class="dropdown">';
     if (items.length > 0) {
       h += '<div class="dd-title">' + items.length + ' supplier account' + (items.length !== 1 ? 's' : '') + '</div>';
       items.forEach(function(a) {
+        var isPending = a.status === 'pending';
         h += '<div class="dd-item" onmousedown="event.preventDefault();addSupplier(' + a.id + ')">';
         h += '<div class="dd-item-left">';
-        h += '<div class="dd-avatar">' + a.initials + '</div>';
-        h += '<div><div class="dd-name">' + esc(a.name) + '</div>';
+        h += '<div class="dd-avatar" style="' + (isPending ? 'background:#FFE0B2;color:#E65100;' : '') + '">' + a.initials + '</div>';
+        h += '<div><div class="dd-name">' + esc(a.name) + (isPending ? ' <span style="font-size:9px;font-weight:700;color:#E65100;background:#FFF3E0;padding:1px 6px;border-radius:99px;margin-left:4px;">Pending</span>' : '') + '</div>';
         h += '<div class="dd-email">' + esc(a.email) + '</div></div>';
         h += '</div>';
         h += '<div class="dd-co">' + esc(a.company) + '</div>';
@@ -449,101 +308,17 @@ function draw() {
     h += '</div>';
   }
   h += '</div>'; // search-wrap
-
-  h += '<button class="btn btn-invite" onmousedown="event.preventDefault();openInvitePanel()">+ Invite a new supplier</button>';
   h += '</div>'; // search-row
 
-  // No results warning (when typing but dropdown closed or no match)
-  if (query.length >= 2 && items.length === 0 && !dropdownOpen && !showInvitePanel) {
+  // No results — direct to Supplier Management
+  if (query.length >= 2 && items.length === 0 && !dropdownOpen) {
     h += '<div class="warn-inline">';
     h += '<div><strong>No account found</strong> for \u201C' + esc(query) + '\u201D</div>';
-    h += '<button class="btn btn-p btn-sm" onmousedown="event.preventDefault();openInvitePanel()">Invite new supplier \u2192</button>';
+    h += '<a href="supplier_management.html" class="btn btn-p btn-sm" style="text-decoration:none;">Go to Supplier Management \u2192</a>';
     h += '</div>';
   }
 
-  // ─── INVITE PANEL ───
-  if (showInvitePanel) {
-    h += '<div class="invite-panel">';
-
-    if (invDone) {
-      h += '<div class="invite-panel-title">Invitation link ready <button class="invite-close" onclick="closeInvitePanel()">\u2715</button></div>';
-      h += '<div style="font-size:12px;color:#555;margin-bottom:10px;">Share this link with <strong>' + esc(invEmail) + '</strong> to invite them.</div>';
-      var doneCoName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : '');
-      h += '<div class="link-result">';
-      h += '<span class="link-result-url">https://app.crown.com/invite/' + invToken + '?role=supplier&company=' + encodeURIComponent(doneCoName) + '</span>';
-      h += '<button class="copy-btn" id="copy-inv-btn" onclick="copyInvLink()">Copy link</button>';
-      h += '</div>';
-      h += '<div style="margin-top:12px;text-align:right;">';
-      h += '<button class="btn btn-s btn-sm" onclick="closeInvitePanel()">Done \u2014 continue adding</button>';
-      h += '</div>';
-    } else {
-      h += '<div class="invite-panel-title">Invite a new supplier <button class="invite-close" onclick="closeInvitePanel()">\u2715</button></div>';
-
-      // ── STEP 1: Company ──
-      h += '<div class="invite-step">1. Supplier company</div>';
-
-      if (invSelectedCo) {
-        // Company selected
-        h += '<div class="co-selected">' + esc(invSelectedCo.name) + ' <button class="co-selected-clear" onclick="clearInvCo()" title="Change">\u2715</button></div>';
-      } else if (invNewCoMode) {
-        // Creating new company
-        h += '<div class="new-co-box">';
-        h += '<div class="new-co-title">New supplier company</div>';
-        h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="inv-co-name" placeholder="Company name" value="' + esc(invNewCoName) + '" oninput="invNewCoName=this.value;updateInviteBtn()" /></div>';
-        h += '<button style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;font-family:inherit;" onclick="cancelNewCoMode()">\u2190 Search existing companies</button>';
-        h += '</div>';
-
-        // Buyer assignment (admin only for new company)
-        if (isAdmin) {
-          h += '<div class="fg"><label class="flabel">Assign to buyer company</label>';
-          h += '<select class="fselect" id="inv-buyer" onchange="invBuyer=this.value;updateInviteBtn()">';
-          h += '<option value="">Select buyer...</option>';
-          buyers.forEach(function(b) { h += '<option value="' + b + '"' + (invBuyer === b ? ' selected' : '') + '>' + b + '</option>'; });
-          h += '</select></div>';
-        }
-      } else {
-        // Search for company
-        h += '<div class="co-search-wrap">';
-        h += '<input class="co-sinput" id="inv-co-search" placeholder="Search for a supplier company..." value="' + esc(invCoQuery) + '" oninput="setInvCoQuery(this.value)" onfocus="invCoDropdownOpen=true;draw()" autocomplete="off" />';
-
-        if (invCoDropdownOpen) {
-          var coResults = getInvCoResults();
-          h += '<div class="co-dropdown">';
-          if (coResults.length > 0) {
-            coResults.forEach(function(co) {
-              h += '<div class="co-dd-item" onmousedown="event.preventDefault();selectInvCo(' + co.id + ',\'' + esc(co.name).replace(/'/g, "\\'") + '\')">' + esc(co.name) + '</div>';
-            });
-          } else {
-            h += '<div class="co-dd-empty">No company found</div>';
-          }
-          h += '</div>';
-        }
-        h += '</div>';
-
-        // Create company button — always visible
-        h += '<button class="create-co-btn" onclick="startNewCoMode()"><span style="font-size:18px;">+</span> Create a new supplier company</button>';
-      }
-
-      // ── STEP 2: Contact ──
-      h += '<div class="divider"></div>';
-      h += '<div class="invite-step">2. Supplier account</div>';
-      h += '<div class="fg2">';
-      h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="inv-name" placeholder="Jane Smith" value="' + esc(invName) + '" oninput="invName=this.value;updateInviteBtn()" /></div>';
-      var emailInvalid = emailTouched && invEmail && !isValidEmail(invEmail);
-      h += '<div class="fg"><label class="flabel">Email address</label><input class="finput' + (emailInvalid ? ' invalid' : '') + '" id="inv-email" type="email" placeholder="jane@supplier.com" value="' + esc(invEmail) + '" oninput="invEmail=this.value;emailTouched=true;updateInviteBtn()" /></div>';
-      h += '</div>';
-      if (emailInvalid) h += '<div class="field-error">Please enter a valid email address.</div>';
-      if (isAlreadyAdded(invEmail) && invEmail) h += '<div class="field-error">This email has already been added to the event.</div>';
-
-      h += '<div class="invite-actions">';
-      h += '<button class="btn btn-s btn-sm" onclick="closeInvitePanel()">Cancel</button>';
-      h += '<button class="btn btn-p btn-sm' + (invSending ? ' btn-loading' : '') + '" id="invite-submit-btn" ' + (canSubmitInvite() && !invSending ? '' : 'disabled') + ' onclick="submitInvite()">' + (invSending ? 'Generating...  ' : 'Generate invitation link') + '</button>';
-      h += '</div>';
-    }
-    h += '</div>';
-  }
-
-  h += '</div>'; // end search card
+  h += '</div>'; // search card
 
   // ─── ADDED SUPPLIERS LIST ───
   h += '<div class="card added-card">';
@@ -552,22 +327,20 @@ function draw() {
   h += '</div>';
 
   if (eventSuppliers.length === 0) {
-    h += '<div class="empty-state">No suppliers added yet. Search by email above or invite a new supplier.</div>';
+    h += '<div class="empty-state">No suppliers added yet. Search by email above to find and add them.</div>';
   } else {
     h += '<div class="added-list">';
     eventSuppliers.forEach(function(s, idx) {
       var isFlash = lastAddedId && lastAddedId === s.id;
+      var isPending = s.status === 'pending';
       h += '<div class="added-item' + (isFlash ? ' flash' : '') + '">';
-      h += '<div class="added-icon ' + (s.isNew ? 'pending' : 'existing') + '">' + (s.isNew ? '\uD83D\uDD17' : '\u2713') + '</div>';
+      h += '<div class="added-icon ' + (isPending ? 'pending' : 'existing') + '">' + (isPending ? '\u23F3' : '\u2713') + '</div>';
       h += '<div class="added-info">';
       h += '<div class="added-name">' + esc(s.name) + '</div>';
       h += '<div class="added-detail">' + esc(s.email) + ' \u00B7 ' + esc(s.company) + '</div>';
       h += '</div>';
-      h += '<span class="added-badge ' + (s.isNew ? 'pending' : 'existing') + '">' + (s.isNew ? 'Pending' : 'Added') + '</span>';
+      h += '<span class="added-badge ' + (isPending ? 'pending' : 'existing') + '">' + (isPending ? 'Pending' : 'Added') + '</span>';
       h += '<div class="added-actions">';
-      if (s.isNew && s.inviteToken) {
-        h += '<button class="added-copy" id="ev-copy-' + idx + '" onclick="copyEventLink(' + idx + ')">Copy link</button>';
-      }
       h += '<button class="added-remove" onclick="removeSupplier(' + idx + ')" title="Remove">\u2715</button>';
       h += '</div>';
       h += '</div>';
@@ -579,7 +352,7 @@ function draw() {
   document.getElementById('main').innerHTML = h;
   restoreFocus(focusInfo);
 
-  if (!focusInfo && !showInvitePanel) {
+  if (!focusInfo) {
     var si = document.getElementById('search-input');
     if (si) si.focus();
   }

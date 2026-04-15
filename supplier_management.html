@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Supplier Management — CROWN</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5F3EE; padding: 32px 20px; min-height: 100vh; }
+.wrap { max-width: 760px; margin: 0 auto; }
+
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.header-title { font-size: 20px; font-weight: 800; color: #111; }
+.crown-logo { font-size: 15px; font-weight: 800; letter-spacing: 0.1em; color: #111; }
+.crown-logo span { color: #1E8A3A; }
+
+.role-tabs { display: flex; background: #fff; border: 1px solid #E0DDD6; border-radius: 10px; padding: 4px; margin-bottom: 20px; gap: 4px; }
+.rtab { flex: 1; padding: 9px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #888; border-radius: 7px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.rtab.on { background: #1E8A3A; color: #fff; }
+
+.card { background: #fff; border: 1px solid #E0DDD6; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+.ctitle { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 3px; }
+.csub { font-size: 12px; color: #888; margin-bottom: 16px; line-height: 1.5; }
+
+.search-row { display: flex; gap: 10px; align-items: center; }
+.sinput { flex: 1; padding: 10px 14px; border: 1px solid #E0DDD6; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; transition: border 0.15s; }
+.sinput:focus { border-color: #1E8A3A; background: #fff; }
+
+.btn { padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; white-space: nowrap; }
+.btn-p { background: #1E8A3A; color: #fff; }
+.btn-p:hover { background: #166B2D; }
+.btn-p:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-s { background: #fff; color: #111; border: 1px solid #E0DDD6; }
+.btn-s:hover { background: #F5F3EE; }
+.btn-sm { padding: 6px 14px; font-size: 11px; }
+.btn-loading { position: relative; pointer-events: none; }
+.btn-loading::after { content: ''; position: absolute; width: 12px; height: 12px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; right: 10px; top: 50%; margin-top: -6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.infobox { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #1B5E2F; margin-bottom: 14px; line-height: 1.5; }
+
+/* Directory */
+.dir-title { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #BBB; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.dir-count { font-weight: 400; color: #CCC; }
+
+.co-card { border: 1px solid #E0DDD6; border-radius: 10px; margin-bottom: 8px; overflow: hidden; transition: border-color 0.15s; }
+.co-card.expanded { border-color: #1E8A3A; }
+.co-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.1s; }
+.co-header:hover { background: #F9F8F5; }
+.co-header-left { display: flex; align-items: center; gap: 12px; }
+.co-logo { width: 34px; height: 34px; border-radius: 8px; background: #F0EDE8; color: #888; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.co-card.expanded .co-logo { background: #D6EAD9; color: #1E8A3A; }
+.co-name { font-size: 14px; font-weight: 700; color: #111; }
+.co-meta { font-size: 11px; color: #888; margin-top: 1px; }
+.co-header-right { display: flex; align-items: center; gap: 8px; }
+.co-badge { font-size: 10px; font-weight: 600; color: #888; background: #F0EDE8; padding: 3px 10px; border-radius: 999px; }
+.co-badge.has-pending { background: #FFF3E0; color: #E65100; }
+.co-arrow { font-size: 12px; color: #CCC; transition: transform 0.2s; }
+.co-card.expanded .co-arrow { transform: rotate(90deg); color: #1E8A3A; }
+
+.co-body { border-top: 1px solid #E8E5E0; padding: 14px 16px; background: #FAFAF8; }
+.acct-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #F0EDE8; }
+.acct-item:last-child { border-bottom: none; }
+.acct-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+.acct-avatar.active { background: #D6EAD9; color: #1E8A3A; }
+.acct-avatar.pending { background: #FFE0B2; color: #E65100; }
+.acct-info { flex: 1; min-width: 0; }
+.acct-name { font-size: 13px; font-weight: 600; color: #111; }
+.acct-email { font-size: 11px; color: #888; }
+.acct-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.acct-badge.active { background: #E8F5E9; color: #1E8A3A; }
+.acct-badge.pending { background: #FFF3E0; color: #E65100; }
+.acct-actions { display: flex; align-items: center; gap: 4px; }
+.acct-copy { padding: 3px 10px; border: 1px solid #E0DDD6; border-radius: 5px; background: #fff; font-size: 10px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.acct-copy:hover { background: #E8F5E9; }
+.acct-copy.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
+
+.empty-co { padding: 12px 0; font-size: 12px; color: #AAA; font-style: italic; }
+
+.add-acct-btn { background: none; border: none; color: #1E8A3A; font-size: 11px; font-weight: 700; cursor: pointer; padding: 8px 0 0; font-family: inherit; }
+.add-acct-btn:hover { text-decoration: underline; }
+
+/* Add account inline form */
+.add-acct-form { border: 1px dashed #B8D9BC; border-radius: 8px; padding: 14px; background: #F5FBF6; margin-top: 10px; }
+.add-acct-title { font-size: 11px; font-weight: 700; color: #1E8A3A; margin-bottom: 10px; }
+
+/* Invite panel */
+.invite-panel { border: 1px solid #E0DDD6; border-radius: 10px; padding: 18px; margin-top: 14px; background: #FAFDF9; }
+.invite-panel-title { font-size: 14px; font-weight: 700; color: #1E8A3A; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+.invite-close { background: none; border: none; font-size: 16px; color: #AAA; cursor: pointer; padding: 0 4px; }
+.invite-close:hover { color: #555; }
+.invite-step { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+
+.co-search-wrap { position: relative; margin-bottom: 12px; }
+.co-sinput { width: 100%; padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #fff; transition: border 0.15s; }
+.co-sinput:focus { border-color: #1E8A3A; }
+.co-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0DDD6; border-top: none; border-radius: 0 0 7px 7px; max-height: 180px; overflow-y: auto; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.co-dd-item { padding: 9px 12px; cursor: pointer; font-size: 13px; color: #333; border-bottom: 1px solid #F5F3EE; transition: background 0.08s; }
+.co-dd-item:last-child { border-bottom: none; }
+.co-dd-item:hover { background: #E8F5E9; }
+.co-dd-empty { padding: 12px; text-align: center; font-size: 12px; color: #AAA; }
+
+.co-selected { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; color: #1B5E2F; }
+.co-selected-clear { background: none; border: none; font-size: 14px; color: #888; cursor: pointer; }
+.co-selected-clear:hover { color: #E53935; }
+
+.create-co-btn { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px dashed #1E8A3A; border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 700; color: #1E8A3A; width: 100%; font-family: inherit; transition: all 0.12s; margin-bottom: 12px; }
+.create-co-btn:hover { background: #E8F5E9; border-style: solid; }
+
+.new-co-box { border: 1px solid #C8E6C9; border-radius: 8px; padding: 14px; background: #F5FBF6; margin-bottom: 12px; }
+.new-co-title { font-size: 11px; font-weight: 700; color: #1E8A3A; margin-bottom: 10px; }
+
+.fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.flabel { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #888; }
+.finput { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #fff; width: 100%; transition: border 0.15s; }
+.finput:focus { border-color: #1E8A3A; }
+.finput.invalid { border-color: #E53935; background: #FFF5F5; }
+.field-error { font-size: 10px; color: #E53935; margin-top: -6px; margin-bottom: 8px; }
+.fselect { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; width: 100%; }
+.invite-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+
+.link-result { background: #F5F3EE; border: 1px solid #E0DDD6; border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; font-family: monospace; color: #888; }
+.link-result-url { flex: 1; word-break: break-all; line-height: 1.5; }
+.copy-btn { flex-shrink: 0; padding: 5px 12px; border: 1px solid #E0DDD6; border-radius: 6px; background: #fff; font-size: 10px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.copy-btn:hover { background: #E8F5E9; }
+.copy-btn.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
+
+.divider { height: 1px; background: #E8E5E0; margin: 14px 0; }
+
+.flash { animation: flashIn 0.5s ease; }
+@keyframes flashIn { 0% { background: #C8E6C9; } 100% { background: transparent; } }
+
+@media (max-width: 520px) {
+  .fg2 { grid-template-columns: 1fr; gap: 8px; }
+  .search-row { flex-direction: column; }
+  .search-row .btn { width: 100%; text-align: center; }
+  .link-result { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-title">Supplier Management</div>
+    <div class="crown-logo">CR<span>&#9650;</span>WN</div>
+  </div>
+  <div class="role-tabs">
+    <button class="rtab on" id="tab-admin" onclick="switchRole('admin')">Admin view</button>
+    <button class="rtab" id="tab-buyer" onclick="switchRole('buyer')">Buyer view</button>
+  </div>
+  <div id="main"></div>
+</div>
+
+<script>
+// ── DATA ──
+var companies = [
+  { id:1, name:'CROWN Procurement', contacts:[
+    {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM', status:'active'},
+    {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD', status:'active'}
+  ]},
+  { id:2, name:'Acme Supplies', contacts:[
+    {id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM', status:'active'}
+  ]},
+  { id:3, name:'Global Logistics SA', contacts:[] },
+  { id:4, name:'Maersk', contacts:[
+    {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ', status:'active'},
+    {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA', status:'pending', inviteToken:'abc123pending'},
+    {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN', status:'active'}
+  ]},
+  { id:5, name:'Cargill', contacts:[{id:51, name:'Mike Ross', email:'m.ross@cargill.com', initials:'MR', status:'active'}] },
+  { id:6, name:'BASF', contacts:[{id:61, name:'Anna Weber', email:'a.weber@basf.de', initials:'AW', status:'active'},{id:62, name:'Klaus Schmidt', email:'k.schmidt@basf.de', initials:'KS', status:'pending', inviteToken:'basf_ks_token'}] },
+  { id:7, name:'Nestl\u00E9', contacts:[{id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB', status:'active'}] },
+  { id:8, name:'Unilever', contacts:[{id:81, name:'Jan de Vries', email:'j.devries@unilever.com', initials:'JV', status:'active'},{id:82, name:'Emma Bakker', email:'e.bakker@unilever.com', initials:'EB', status:'active'}] },
+  { id:9, name:'Danone', contacts:[{id:91, name:'Claire Dubois', email:'c.dubois@danone.com', initials:'CD', status:'active'}] },
+  { id:10, name:'Bayer', contacts:[] },
+  { id:11, name:'Syngenta', contacts:[{id:111, name:'Marco Rossi', email:'m.rossi@syngenta.com', initials:'MR', status:'active'}] },
+  { id:12, name:'ADM', contacts:[{id:121, name:'Sarah Miller', email:'s.miller@adm.com', initials:'SM', status:'active'},{id:122, name:'Tom Brown', email:'t.brown@adm.com', initials:'TB', status:'active'}] },
+  { id:13, name:'Louis Dreyfus Company', contacts:[{id:131, name:'Jean Moreau', email:'j.moreau@ldc.com', initials:'JM', status:'active'}] },
+  { id:14, name:'Olam International', contacts:[] },
+  { id:15, name:'Barry Callebaut', contacts:[{id:151, name:'Lukas M\u00FCller', email:'l.muller@barry-callebaut.com', initials:'LM', status:'active'}] },
+  { id:16, name:'Kerry Group', contacts:[{id:161, name:'Liam Murphy', email:'l.murphy@kerry.com', initials:'LM', status:'active'},{id:162, name:'Aoife Kelly', email:'a.kelly@kerry.com', initials:'AK', status:'active'}] },
+  { id:17, name:'DSM-Firmenich', contacts:[{id:171, name:'Daan Jansen', email:'d.jansen@dsm.com', initials:'DJ', status:'active'}] },
+  { id:18, name:'Symrise', contacts:[{id:181, name:'Felix Wagner', email:'f.wagner@symrise.com', initials:'FW', status:'active'}] }
+];
+var buyers = ['Bonduelle','Safran','Kiabi'];
+var nextId = 200;
+
+// ── STATE ──
+var role = 'admin';
+var query = '';
+var expandedCo = null;
+var showInvitePanel = false;
+var addingToCoId = null; // inline add account to existing company
+
+// Invite panel
+var invCoQuery = '';
+var invCoDropdownOpen = false;
+var invSelectedCo = null;
+var invNewCoMode = false;
+var invNewCoName = '';
+var invName = '';
+var invEmail = '';
+var invBuyer = '';
+var invSending = false;
+var invDone = false;
+var invToken = '';
+var emailTouched = false;
+
+// Inline add account
+var addName = '';
+var addEmail = '';
+var addEmailTouched = false;
+var addSending = false;
+var addDone = false;
+var addToken = '';
+
+var lastFlashId = null;
+
+// ── HELPERS ──
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function getInitials(n) { var p=n.trim().split(/\s+/); return p.length>1 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase(); }
+
+function getFilteredCompanies() {
+  if (query.length < 2) return companies;
+  var q = query.toLowerCase();
+  return companies.filter(function(co) {
+    if (co.name.toLowerCase().indexOf(q) > -1) return true;
+    return co.contacts.some(function(c) {
+      return c.email.toLowerCase().indexOf(q) > -1 || c.name.toLowerCase().indexOf(q) > -1;
+    });
+  });
+}
+
+// ── ACTIONS ──
+function toggleCo(id) {
+  expandedCo = expandedCo === id ? null : id;
+  addingToCoId = null; addName = ''; addEmail = ''; addEmailTouched = false; addSending = false; addDone = false; addToken = '';
+  draw();
+}
+
+function startAddAccount(coId) {
+  addingToCoId = coId; addName = ''; addEmail = ''; addEmailTouched = false; addSending = false; addDone = false; addToken = '';
+  draw();
+}
+
+function cancelAddAccount() {
+  addingToCoId = null; addDone = false; addToken = '';
+  draw();
+}
+
+function submitAddAccount(coId) {
+  addSending = true; draw();
+  setTimeout(function() {
+    addSending = false;
+    addToken = Math.random().toString(36).substr(2, 12);
+    var co = companies.find(function(c){return c.id===coId;});
+    if (co) {
+      var newContact = {
+        id: nextId++, name: addName || addEmail, email: addEmail,
+        initials: addName ? getInitials(addName) : '??',
+        status: 'pending', inviteToken: addToken
+      };
+      co.contacts.push(newContact);
+      lastFlashId = newContact.id;
+      addDone = true;
+    }
+    draw();
+    setTimeout(function() { lastFlashId = null; }, 600);
+  }, 800);
+}
+
+function openInvitePanel() {
+  showInvitePanel = true;
+  invCoQuery = ''; invCoDropdownOpen = false; invSelectedCo = null;
+  invNewCoMode = false; invNewCoName = '';
+  invName = ''; invEmail = ''; invBuyer = '';
+  invSending = false; invDone = false; invToken = '';
+  emailTouched = false;
+  draw();
+}
+
+function closeInvitePanel() {
+  showInvitePanel = false; invDone = false; invToken = '';
+  draw();
+}
+
+function selectInvCo(id, name) {
+  invSelectedCo = { id: id, name: name };
+  invCoDropdownOpen = false; invCoQuery = ''; invNewCoMode = false;
+  draw();
+}
+
+function clearInvCo() { invSelectedCo = null; invNewCoMode = false; invCoQuery = ''; draw(); }
+
+function startNewCoMode() {
+  invNewCoMode = true; invSelectedCo = null; invNewCoName = invCoQuery;
+  invCoDropdownOpen = false; draw();
+}
+
+function cancelNewCoMode() { invNewCoMode = false; invNewCoName = ''; draw(); }
+
+function getInvCoResults() {
+  if (invCoQuery.length < 1) return companies;
+  var q = invCoQuery.toLowerCase();
+  return companies.filter(function(c){ return c.name.toLowerCase().indexOf(q) > -1; });
+}
+
+function canSubmitInvite() {
+  if (!isValidEmail(invEmail)) return false;
+  if (!invSelectedCo && !invNewCoMode) return false;
+  if (invNewCoMode && !invNewCoName.trim()) return false;
+  if (role === 'admin' && invNewCoMode && !invBuyer) return false;
+  return true;
+}
+
+function updateInviteBtn() {
+  var btn = document.getElementById('invite-submit-btn');
+  if (btn) btn.disabled = !canSubmitInvite();
+}
+
+function updateAddBtn() {
+  var btn = document.getElementById('add-acct-btn');
+  if (btn) btn.disabled = !(isValidEmail(addEmail));
+}
+
+function submitInvite() {
+  invSending = true; draw();
+  setTimeout(function() {
+    invSending = false;
+    invToken = Math.random().toString(36).substr(2, 12);
+    var co;
+    if (invNewCoMode) {
+      co = { id: nextId++, name: invNewCoName, contacts: [] };
+      companies.push(co);
+    } else {
+      co = companies.find(function(c){return c.id===invSelectedCo.id;});
+    }
+    if (co) {
+      var newContact = {
+        id: nextId++, name: invName || invEmail, email: invEmail,
+        initials: invName ? getInitials(invName) : '??',
+        status: 'pending', inviteToken: invToken
+      };
+      co.contacts.push(newContact);
+      lastFlashId = newContact.id;
+      expandedCo = co.id;
+    }
+    invDone = true;
+    draw();
+    setTimeout(function() { lastFlashId = null; }, 600);
+  }, 1000);
+}
+
+function copyLink(token, btnId) {
+  var co = null;
+  companies.forEach(function(c) { c.contacts.forEach(function(ct) { if (ct.inviteToken === token) co = c; }); });
+  var link = 'https://app.crown.com/invite/' + token + '?role=supplier' + (co ? '&company=' + encodeURIComponent(co.name) : '');
+  navigator.clipboard.writeText(link).then(function() {
+    var btn = document.getElementById(btnId);
+    if (btn) { btn.textContent = 'Copied!'; btn.className = btn.className.replace('acct-copy','acct-copy copied').replace('copy-btn','copy-btn copied'); }
+    setTimeout(function() {
+      var btn = document.getElementById(btnId);
+      if (btn) { btn.textContent = 'Copy link'; btn.className = btn.className.replace(' copied',''); }
+    }, 2000);
+  });
+}
+
+function switchRole(r) {
+  if (r === role) return;
+  role = r;
+  document.getElementById('tab-admin').className = 'rtab' + (r === 'admin' ? ' on' : '');
+  document.getElementById('tab-buyer').className = 'rtab' + (r === 'buyer' ? ' on' : '');
+  draw();
+}
+
+var searchTimer = null;
+function setQuery(v) {
+  query = v;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() { draw(); }, 120);
+}
+
+function setInvCoQuery(v) {
+  invCoQuery = v; invCoDropdownOpen = true;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() { draw(); }, 100);
+}
+
+function saveFocus() {
+  var el = document.activeElement;
+  if (!el || !el.id) return null;
+  return { id: el.id, start: el.selectionStart, end: el.selectionEnd };
+}
+function restoreFocus(info) {
+  if (!info) return;
+  var el = document.getElementById(info.id);
+  if (!el) return;
+  el.focus();
+  if (typeof el.setSelectionRange === 'function' && info.start != null) {
+    try { el.setSelectionRange(info.start, info.end); } catch(e) {}
+  }
+}
+
+document.addEventListener('mousedown', function(e) {
+  if (!e.target.closest('.co-search-wrap') && !e.target.closest('.co-dropdown')) {
+    if (invCoDropdownOpen) { invCoDropdownOpen = false; draw(); }
+  }
+});
+
+// ── DRAW ──
+function draw() {
+  var focusInfo = saveFocus();
+  var isAdmin = role === 'admin';
+  var filtered = getFilteredCompanies();
+  var totalAccounts = 0;
+  companies.forEach(function(c){ totalAccounts += c.contacts.length; });
+  var h = '';
+
+  if (!isAdmin) {
+    h += '<div class="infobox">Viewing suppliers linked to <strong>Bonduelle</strong>.</div>';
+  }
+
+  // ─── SEARCH + INVITE ───
+  h += '<div class="card">';
+  h += '<div class="ctitle">Supplier Directory</div>';
+  h += '<div class="csub">Manage supplier companies and accounts. Invite new suppliers to create their account on the platform.</div>';
+
+  h += '<div class="search-row">';
+  h += '<input class="sinput" id="search-input" placeholder="Search by company name or email..." value="' + esc(query) + '" oninput="setQuery(this.value)" />';
+  h += '<button class="btn btn-p" onmousedown="event.preventDefault();openInvitePanel()">+ Invite supplier</button>';
+  h += '</div>';
+
+  // ─── INVITE PANEL ───
+  if (showInvitePanel) {
+    h += '<div class="invite-panel">';
+    if (invDone) {
+      h += '<div class="invite-panel-title">Invitation link ready <button class="invite-close" onclick="closeInvitePanel()">\u2715</button></div>';
+      h += '<div style="font-size:12px;color:#555;margin-bottom:10px;">Share this link with <strong>' + esc(invEmail) + '</strong> to invite them to create their account.</div>';
+      var doneCoName = invNewCoMode ? invNewCoName : (invSelectedCo ? invSelectedCo.name : '');
+      h += '<div class="link-result">';
+      h += '<span class="link-result-url">https://app.crown.com/invite/' + invToken + '?role=supplier&company=' + encodeURIComponent(doneCoName) + '</span>';
+      h += '<button class="copy-btn" id="copy-inv-btn" onclick="copyLink(\'' + invToken + '\',\'copy-inv-btn\')">Copy link</button>';
+      h += '</div>';
+      h += '<div style="margin-top:12px;text-align:right;">';
+      h += '<button class="btn btn-s btn-sm" onclick="closeInvitePanel()">Done</button>';
+      h += '</div>';
+    } else {
+      h += '<div class="invite-panel-title">Invite a new supplier <button class="invite-close" onclick="closeInvitePanel()">\u2715</button></div>';
+
+      h += '<div class="invite-step">1. Supplier company</div>';
+      if (invSelectedCo) {
+        h += '<div class="co-selected">' + esc(invSelectedCo.name) + ' <button class="co-selected-clear" onclick="clearInvCo()">\u2715</button></div>';
+      } else if (invNewCoMode) {
+        h += '<div class="new-co-box">';
+        h += '<div class="new-co-title">New supplier company</div>';
+        h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="inv-co-name" placeholder="Company name" value="' + esc(invNewCoName) + '" oninput="invNewCoName=this.value;updateInviteBtn()" /></div>';
+        h += '<button style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;font-family:inherit;" onclick="cancelNewCoMode()">\u2190 Search existing companies</button>';
+        h += '</div>';
+        if (isAdmin) {
+          h += '<div class="fg"><label class="flabel">Assign to buyer</label>';
+          h += '<select class="fselect" id="inv-buyer" onchange="invBuyer=this.value;updateInviteBtn()">';
+          h += '<option value="">Select buyer...</option>';
+          buyers.forEach(function(b) { h += '<option value="' + b + '"' + (invBuyer === b ? ' selected' : '') + '>' + b + '</option>'; });
+          h += '</select></div>';
+        }
+      } else {
+        h += '<div class="co-search-wrap">';
+        h += '<input class="co-sinput" id="inv-co-search" placeholder="Search for a supplier company..." value="' + esc(invCoQuery) + '" oninput="setInvCoQuery(this.value)" onfocus="invCoDropdownOpen=true;draw()" autocomplete="off" />';
+        if (invCoDropdownOpen) {
+          var coResults = getInvCoResults();
+          h += '<div class="co-dropdown">';
+          if (coResults.length > 0) {
+            coResults.forEach(function(co) {
+              h += '<div class="co-dd-item" onmousedown="event.preventDefault();selectInvCo(' + co.id + ',\'' + esc(co.name).replace(/'/g,"\\'") + '\')">' + esc(co.name) + '</div>';
+            });
+          } else {
+            h += '<div class="co-dd-empty">No company found</div>';
+          }
+          h += '</div>';
+        }
+        h += '</div>';
+        h += '<button class="create-co-btn" onclick="startNewCoMode()"><span style="font-size:18px;">+</span> Create a new supplier company</button>';
+      }
+
+      h += '<div class="divider"></div>';
+      h += '<div class="invite-step">2. Supplier account</div>';
+      h += '<div class="fg2">';
+      h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="inv-name" placeholder="Jane Smith" value="' + esc(invName) + '" oninput="invName=this.value;updateInviteBtn()" /></div>';
+      var emailInv = emailTouched && invEmail && !isValidEmail(invEmail);
+      h += '<div class="fg"><label class="flabel">Email address</label><input class="finput' + (emailInv ? ' invalid' : '') + '" id="inv-email" type="email" placeholder="jane@supplier.com" value="' + esc(invEmail) + '" oninput="invEmail=this.value;emailTouched=true;updateInviteBtn()" /></div>';
+      h += '</div>';
+      if (emailInv) h += '<div class="field-error">Please enter a valid email address.</div>';
+
+      h += '<div class="invite-actions">';
+      h += '<button class="btn btn-s btn-sm" onclick="closeInvitePanel()">Cancel</button>';
+      h += '<button class="btn btn-p btn-sm' + (invSending ? ' btn-loading' : '') + '" id="invite-submit-btn" ' + (canSubmitInvite() && !invSending ? '' : 'disabled') + ' onclick="submitInvite()">' + (invSending ? 'Generating...  ' : 'Generate invitation link') + '</button>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '</div>'; // search card
+
+  // ─── DIRECTORY ───
+  h += '<div class="card">';
+  h += '<div class="dir-title">Supplier companies <span class="dir-count">(' + filtered.length + ' companies, ' + totalAccounts + ' accounts)</span></div>';
+
+  if (filtered.length === 0) {
+    h += '<div style="text-align:center;padding:20px;color:#CCC;font-size:12px;">No companies match your search.</div>';
+  }
+
+  filtered.forEach(function(co) {
+    var isExpanded = expandedCo === co.id;
+    var pendingCount = co.contacts.filter(function(c){return c.status==='pending';}).length;
+    var initials = co.name.split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+
+    h += '<div class="co-card' + (isExpanded ? ' expanded' : '') + '">';
+    h += '<div class="co-header" onclick="toggleCo(' + co.id + ')">';
+    h += '<div class="co-header-left">';
+    h += '<div class="co-logo">' + initials + '</div>';
+    h += '<div><div class="co-name">' + esc(co.name) + '</div>';
+    h += '<div class="co-meta">' + co.contacts.length + ' account' + (co.contacts.length !== 1 ? 's' : '') + '</div></div>';
+    h += '</div>';
+    h += '<div class="co-header-right">';
+    if (pendingCount > 0) h += '<span class="co-badge has-pending">' + pendingCount + ' pending</span>';
+    h += '<span class="co-arrow">\u25B6</span>';
+    h += '</div>';
+    h += '</div>';
+
+    if (isExpanded) {
+      h += '<div class="co-body">';
+      if (co.contacts.length === 0) {
+        h += '<div class="empty-co">No accounts yet. Add one below.</div>';
+      } else {
+        co.contacts.forEach(function(c) {
+          var isFlash = lastFlashId === c.id;
+          h += '<div class="acct-item' + (isFlash ? ' flash' : '') + '">';
+          h += '<div class="acct-avatar ' + c.status + '">' + c.initials + '</div>';
+          h += '<div class="acct-info">';
+          h += '<div class="acct-name">' + esc(c.name) + '</div>';
+          h += '<div class="acct-email">' + esc(c.email) + '</div>';
+          h += '</div>';
+          h += '<span class="acct-badge ' + c.status + '">' + (c.status === 'active' ? 'Active' : 'Pending') + '</span>';
+          if (c.status === 'pending' && c.inviteToken) {
+            h += '<div class="acct-actions"><button class="acct-copy" id="cp-' + c.id + '" onclick="event.stopPropagation();copyLink(\'' + c.inviteToken + '\',\'cp-' + c.id + '\')">Copy link</button></div>';
+          }
+          h += '</div>';
+        });
+      }
+
+      // Inline add account
+      if (addingToCoId === co.id && !addDone) {
+        h += '<div class="add-acct-form">';
+        h += '<div class="add-acct-title">Invite a new account to ' + esc(co.name) + '</div>';
+        h += '<div class="fg2">';
+        h += '<div class="fg"><label class="flabel">Full name</label><input class="finput" id="add-name" placeholder="Jane Smith" value="' + esc(addName) + '" oninput="addName=this.value;updateAddBtn()" /></div>';
+        var addEmailInv = addEmailTouched && addEmail && !isValidEmail(addEmail);
+        h += '<div class="fg"><label class="flabel">Email</label><input class="finput' + (addEmailInv ? ' invalid' : '') + '" id="add-email" type="email" placeholder="jane@company.com" value="' + esc(addEmail) + '" oninput="addEmail=this.value;addEmailTouched=true;updateAddBtn()" /></div>';
+        h += '</div>';
+        if (addEmailInv) h += '<div class="field-error">Please enter a valid email address.</div>';
+        h += '<div class="invite-actions">';
+        h += '<button class="btn btn-s btn-sm" onclick="cancelAddAccount()">Cancel</button>';
+        h += '<button class="btn btn-p btn-sm' + (addSending ? ' btn-loading' : '') + '" id="add-acct-btn" ' + (isValidEmail(addEmail) && !addSending ? '' : 'disabled') + ' onclick="submitAddAccount(' + co.id + ')">' + (addSending ? 'Generating...' : 'Generate invitation link') + '</button>';
+        h += '</div>';
+        h += '</div>';
+      } else if (addingToCoId === co.id && addDone) {
+        h += '<div class="add-acct-form">';
+        h += '<div class="add-acct-title">Invitation link ready</div>';
+        h += '<div style="font-size:12px;color:#555;margin-bottom:8px;">Share this link with <strong>' + esc(addEmail) + '</strong>.</div>';
+        h += '<div class="link-result">';
+        h += '<span class="link-result-url">https://app.crown.com/invite/' + addToken + '?role=supplier&company=' + encodeURIComponent(co.name) + '</span>';
+        h += '<button class="copy-btn" id="cp-add-' + co.id + '" onclick="copyLink(\'' + addToken + '\',\'cp-add-' + co.id + '\')">Copy link</button>';
+        h += '</div>';
+        h += '<div style="margin-top:8px;text-align:right;"><button class="btn btn-s btn-sm" onclick="cancelAddAccount()">Done</button></div>';
+        h += '</div>';
+      } else {
+        h += '<button class="add-acct-btn" onclick="event.stopPropagation();startAddAccount(' + co.id + ')">+ Add a supplier account</button>';
+      }
+      h += '</div>';
+    }
+    h += '</div>';
+  });
+
+  h += '</div>'; // directory card
+
+  document.getElementById('main').innerHTML = h;
+  restoreFocus(focusInfo);
+}
+
+draw();
+</script>
+</body>
+</html>
