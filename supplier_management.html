@@ -379,6 +379,11 @@ function canSubmitInvite() {
   return true;
 }
 
+function updateNewCoBtn() {
+  var btn = document.getElementById('new-co-btn');
+  if (btn) btn.disabled = !mCoName.trim();
+}
+
 function updateInvBtn() {
   var btn = document.getElementById('modal-submit-btn');
   if (btn) btn.disabled = !canSubmitInvite();
@@ -517,17 +522,14 @@ function drawModal() {
     } else {
       h += '<div class="modal-title">New supplier company</div>';
       h += '<div class="modal-sub">Create a new company, then invite suppliers to it.</div>';
-      h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="m-co-name" placeholder="Company name" value="' + esc(mCoName) + '" oninput="mCoName=this.value" /></div>';
-      h += '<div class="fg2">';
-      h += '<div class="fg"><label class="flabel">Country</label><input class="finput" id="m-co-country" placeholder="Country" value="' + esc(mCoCountry) + '" oninput="mCoCountry=this.value" /></div>';
+      h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="m-co-name" placeholder="Company name" value="' + esc(mCoName) + '" oninput="mCoName=this.value;updateNewCoBtn()" /></div>';
       h += '<div class="fg"><label class="flabel">Client</label>';
       h += '<select class="fselect" id="m-co-client" onchange="mCoClient=this.value"><option value="">Select client...</option>';
       clients.forEach(function(c) { h += '<option value="' + c + '"' + (mCoClient===c?' selected':'') + '>' + c + '</option>'; });
       h += '</select></div>';
-      h += '</div>';
       h += '<div class="modal-actions">';
       h += '<button class="btn btn-s" onclick="closeModal()">Cancel</button>';
-      h += '<button class="btn btn-dark' + (mSending ? ' btn-loading' : '') + '" ' + (!mCoName.trim() || mSending ? 'disabled' : '') + ' onclick="submitNewCompany()">' + (mSending ? 'Creating...' : 'Create company') + '</button>';
+      h += '<button class="btn btn-dark' + (mSending ? ' btn-loading' : '') + '" id="new-co-btn" ' + (!mCoName.trim() || mSending ? 'disabled' : '') + ' onclick="submitNewCompany()">' + (mSending ? 'Creating...' : 'Create company') + '</button>';
       h += '</div>';
     }
   }
