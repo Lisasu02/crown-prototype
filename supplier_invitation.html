@@ -151,35 +151,40 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 </div>
 
 <script>
-// ── DATA (same as supplier_management — with status) ──
+// ── DATA (synced with supplier_management) ──
 var companies = [
-  { id:1, name:'CROWN Procurement', contacts:[
-    {id:11, name:'Alice Martin', email:'alice.martin@crown.com', initials:'AM', status:'active'},
-    {id:12, name:'Thomas Dupont', email:'t.dupont@crown.com', initials:'TD', status:'active'}
+  { id:1, name:'Acme Corporation', contacts:[
+    {id:11, name:'Hans Braun', email:'hans@acme-corp.de', initials:'HB', status:'active'},
+    {id:12, name:'Petra Wolf', email:'petra@acme-corp.de', initials:'PW', status:'active'}
   ]},
-  { id:2, name:'Acme Supplies', contacts:[
-    {id:21, name:'Hans M\u00FCller', email:'h.muller@acme.de', initials:'HM', status:'active'}
+  { id:2, name:'Bosch Automotive', contacts:[
+    {id:21, name:'Klaus Richter', email:'klaus@bosch-auto.de', initials:'KR', status:'active'},
+    {id:22, name:'Eva Fischer', email:'eva@bosch-auto.de', initials:'EF', status:'active'},
+    {id:23, name:'Max Bauer', email:'max@bosch-auto.de', initials:'MB', status:'invited'}
   ]},
-  { id:3, name:'Global Logistics SA', contacts:[] },
-  { id:4, name:'Maersk', contacts:[
-    {id:41, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ', status:'active'},
-    {id:42, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA', status:'pending'},
-    {id:43, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN', status:'active'}
+  { id:3, name:'Continental AG', contacts:[
+    {id:31, name:'Anna M\u00FCller', email:'anna@continental.de', initials:'AM', status:'active'},
+    {id:32, name:'Stefan Klein', email:'stefan@continental.de', initials:'SK', status:'invited'}
   ]},
-  { id:5, name:'Cargill', contacts:[{id:51, name:'Mike Ross', email:'m.ross@cargill.com', initials:'MR', status:'active'}] },
-  { id:6, name:'BASF', contacts:[{id:61, name:'Anna Weber', email:'a.weber@basf.de', initials:'AW', status:'active'},{id:62, name:'Klaus Schmidt', email:'k.schmidt@basf.de', initials:'KS', status:'pending'}] },
-  { id:7, name:'Nestl\u00E9', contacts:[{id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB', status:'active'}] },
-  { id:8, name:'Unilever', contacts:[{id:81, name:'Jan de Vries', email:'j.devries@unilever.com', initials:'JV', status:'active'},{id:82, name:'Emma Bakker', email:'e.bakker@unilever.com', initials:'EB', status:'active'}] },
-  { id:9, name:'Danone', contacts:[{id:91, name:'Claire Dubois', email:'c.dubois@danone.com', initials:'CD', status:'active'}] },
-  { id:10, name:'Bayer', contacts:[] },
-  { id:11, name:'Syngenta', contacts:[{id:111, name:'Marco Rossi', email:'m.rossi@syngenta.com', initials:'MR', status:'active'}] },
-  { id:12, name:'ADM', contacts:[{id:121, name:'Sarah Miller', email:'s.miller@adm.com', initials:'SM', status:'active'},{id:122, name:'Tom Brown', email:'t.brown@adm.com', initials:'TB', status:'active'}] },
-  { id:13, name:'Louis Dreyfus Company', contacts:[{id:131, name:'Jean Moreau', email:'j.moreau@ldc.com', initials:'JM', status:'active'}] },
-  { id:14, name:'Olam International', contacts:[] },
-  { id:15, name:'Barry Callebaut', contacts:[{id:151, name:'Lukas M\u00FCller', email:'l.muller@barry-callebaut.com', initials:'LM', status:'active'}] },
-  { id:16, name:'Kerry Group', contacts:[{id:161, name:'Liam Murphy', email:'l.murphy@kerry.com', initials:'LM', status:'active'},{id:162, name:'Aoife Kelly', email:'a.kelly@kerry.com', initials:'AK', status:'active'}] },
-  { id:17, name:'DSM-Firmenich', contacts:[{id:171, name:'Daan Jansen', email:'d.jansen@dsm.com', initials:'DJ', status:'active'}] },
-  { id:18, name:'Symrise', contacts:[{id:181, name:'Felix Wagner', email:'f.wagner@symrise.com', initials:'FW', status:'active'}] }
+  { id:4, name:'Crown Materials', contacts:[
+    {id:41, name:'James Wilson', email:'james@crownmat.co.uk', initials:'JW', status:'active'}
+  ]},
+  { id:5, name:'Delta Electronics', contacts:[
+    {id:51, name:'Wei Chen', email:'wei@delta-elec.tw', initials:'WC', status:'invited'},
+    {id:52, name:'Li Zhang', email:'li@delta-elec.tw', initials:'LZ', status:'invited'}
+  ]},
+  { id:6, name:'Maersk', contacts:[
+    {id:61, name:'Erik Jensen', email:'e.jensen@maersk.com', initials:'EJ', status:'active'},
+    {id:62, name:'Sofia Andersen', email:'s.andersen@maersk.com', initials:'SA', status:'invited'},
+    {id:63, name:'Lars Nielsen', email:'l.nielsen@maersk.com', initials:'LN', status:'active'}
+  ]},
+  { id:7, name:'Nestl\u00E9 Supply', contacts:[
+    {id:71, name:'Pierre Blanc', email:'p.blanc@nestle.com', initials:'PB', status:'active'}
+  ]},
+  { id:8, name:'Unilever Partners', contacts:[
+    {id:81, name:'Jan de Vries', email:'j.devries@unilever.com', initials:'JV', status:'active'},
+    {id:82, name:'Emma Bakker', email:'e.bakker@unilever.com', initials:'EB', status:'active'}
+  ]}
 ];
 
 function getAllAccounts() {
@@ -292,7 +297,7 @@ function draw() {
     if (items.length > 0) {
       h += '<div class="dd-title">' + items.length + ' supplier account' + (items.length !== 1 ? 's' : '') + '</div>';
       items.forEach(function(a) {
-        var isPending = a.status === 'pending';
+        var isPending = a.status === 'invited';
         h += '<div class="dd-item" onmousedown="event.preventDefault();addSupplier(' + a.id + ')">';
         h += '<div class="dd-item-left">';
         h += '<div class="dd-avatar" style="' + (isPending ? 'background:#FFE0B2;color:#E65100;' : '') + '">' + a.initials + '</div>';
@@ -332,7 +337,7 @@ function draw() {
     h += '<div class="added-list">';
     eventSuppliers.forEach(function(s, idx) {
       var isFlash = lastAddedId && lastAddedId === s.id;
-      var isPending = s.status === 'pending';
+      var isPending = s.status === 'invited';
       h += '<div class="added-item' + (isFlash ? ' flash' : '') + '">';
       h += '<div class="added-icon ' + (isPending ? 'pending' : 'existing') + '">' + (isPending ? '\u23F3' : '\u2713') + '</div>';
       h += '<div class="added-info">';
