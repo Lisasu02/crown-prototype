@@ -130,6 +130,9 @@ body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5
 
 .divider { height: 1px; background: #E8E5E0; margin: 16px 0; }
 
+.filter-on { background: #1A1A1A !important; color: #fff !important; border-color: #1A1A1A !important; }
+.filter-on span { color: #999 !important; }
+
 .flash { animation: flashIn 0.5s ease; }
 @keyframes flashIn { 0% { background: #C8E6C9; } 100% { background: transparent; } }
 
@@ -252,6 +255,8 @@ var mSending = false;
 var mDone = false;
 var mToken = '';
 var lastFlashId = null;
+var statusFilter = 'all'; // 'all' | 'active' | 'invited'
+var newCoId = null; // track newly created company for invite prompt
 
 // ── HELPERS ──
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -259,15 +264,29 @@ function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function getInitials(n) { var p=n.trim().split(/\s+/); return p.length>1 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase(); }
 
 function getFiltered() {
-  if (query.length < 2) return companies;
-  var q = query.toLowerCase();
-  return companies.filter(function(co) {
-    if (co.name.toLowerCase().indexOf(q) > -1) return true;
-    return co.contacts.some(function(c) {
-      return c.email.toLowerCase().indexOf(q) > -1 || c.name.toLowerCase().indexOf(q) > -1;
+  var list = companies;
+  // Status filter
+  if (statusFilter === 'active') {
+    list = list.filter(function(co) { return getCompanyStatus(co) === 'active'; });
+  } else if (statusFilter === 'invited') {
+    list = list.filter(function(co) {
+      return co.contacts.some(function(c){ return c.status === 'invited'; });
     });
-  });
+  }
+  // Search filter
+  if (query.length >= 2) {
+    var q = query.toLowerCase();
+    list = list.filter(function(co) {
+      if (co.name.toLowerCase().indexOf(q) > -1) return true;
+      return co.contacts.some(function(c) {
+        return c.email.toLowerCase().indexOf(q) > -1 || c.name.toLowerCase().indexOf(q) > -1;
+      });
+    });
+  }
+  return list;
 }
+
+function setStatusFilter(f) { statusFilter = f; draw(); }
 
 function getCompanyStatus(co) {
   if (co.contacts.length === 0) return 'active';
@@ -317,10 +336,19 @@ function submitNewCompany() {
   if (!mCoName.trim()) return;
   mSending = true; drawModal();
   setTimeout(function() {
-    companies.push({ id: nextId++, name: mCoName, country: mCoCountry, client: mCoClient, contacts: [] });
-    mSending = false; mDone = true; modal = null;
+    newCoId = nextId++;
+    companies.push({ id: newCoId, name: mCoName, country: mCoCountry, client: mCoClient, contacts: [] });
+    expandedCo = newCoId;
+    mSending = false; mDone = true;
     drawModal(); draw();
   }, 600);
+}
+
+function inviteToNewCompany() {
+  var coId = newCoId;
+  newCoId = null;
+  closeModal();
+  openInviteModal(coId);
 }
 
 function submitInvite() {
@@ -401,6 +429,16 @@ function draw() {
     document.getElementById('buyer-info').innerHTML = '';
   }
 
+  // Status filter
+  var allCount = companies.length;
+  var activeCount = companies.filter(function(c){return getCompanyStatus(c)==='active';}).length;
+  var invitedCount = companies.filter(function(c){return c.contacts.some(function(ct){return ct.status==='invited';});}).length;
+  h += '<div style="display:flex;gap:6px;margin-bottom:14px;">';
+  h += '<button class="btn btn-s btn-sm' + (statusFilter==='all'?' filter-on':'') + '" onclick="setStatusFilter(\'all\')">All <span style="color:#AAA;font-weight:400;">(' + allCount + ')</span></button>';
+  h += '<button class="btn btn-s btn-sm' + (statusFilter==='active'?' filter-on':'') + '" onclick="setStatusFilter(\'active\')">Active <span style="color:#AAA;font-weight:400;">(' + activeCount + ')</span></button>';
+  h += '<button class="btn btn-s btn-sm' + (statusFilter==='invited'?' filter-on':'') + '" onclick="setStatusFilter(\'invited\')">Invited <span style="color:#AAA;font-weight:400;">(' + invitedCount + ')</span></button>';
+  h += '</div>';
+
   h += '<div class="table-wrap">';
   h += '<div class="table-header">';
   h += '<div class="th">Company</div><div class="th">Country</div><div class="th">Client</div><div class="th">Suppliers</div><div class="th">Status</div><div class="th"></div>';
@@ -465,20 +503,33 @@ function drawModal() {
   h += '<div class="modal" onclick="event.stopPropagation()">';
 
   if (modal === 'new-company') {
-    h += '<div class="modal-title">New supplier company</div>';
-    h += '<div class="modal-sub">Create a new company, then invite suppliers to it.</div>';
-    h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="m-co-name" placeholder="Company name" value="' + esc(mCoName) + '" oninput="mCoName=this.value" /></div>';
-    h += '<div class="fg2">';
-    h += '<div class="fg"><label class="flabel">Country</label><input class="finput" id="m-co-country" placeholder="Country" value="' + esc(mCoCountry) + '" oninput="mCoCountry=this.value" /></div>';
-    h += '<div class="fg"><label class="flabel">Client</label>';
-    h += '<select class="fselect" id="m-co-client" onchange="mCoClient=this.value"><option value="">Select client...</option>';
-    clients.forEach(function(c) { h += '<option value="' + c + '"' + (mCoClient===c?' selected':'') + '>' + c + '</option>'; });
-    h += '</select></div>';
-    h += '</div>';
-    h += '<div class="modal-actions">';
-    h += '<button class="btn btn-s" onclick="closeModal()">Cancel</button>';
-    h += '<button class="btn btn-dark' + (mSending ? ' btn-loading' : '') + '" ' + (!mCoName.trim() || mSending ? 'disabled' : '') + ' onclick="submitNewCompany()">' + (mSending ? 'Creating...' : 'Create company') + '</button>';
-    h += '</div>';
+    if (mDone) {
+      // Success — company created
+      h += '<div style="text-align:center;padding:12px 0;">';
+      h += '<div style="width:48px;height:48px;border-radius:50%;background:#E8F5E9;color:#1E8A3A;font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">\u2713</div>';
+      h += '<div class="modal-title" style="text-align:center;">' + esc(mCoName) + ' created</div>';
+      h += '<div class="modal-sub" style="text-align:center;">The company has been added to the directory. You can now invite suppliers to it.</div>';
+      h += '</div>';
+      h += '<div class="modal-actions" style="justify-content:center;">';
+      h += '<button class="btn btn-s" onclick="closeModal()">Done</button>';
+      h += '<button class="btn btn-green" onclick="inviteToNewCompany()">+ Invite a supplier to ' + esc(mCoName) + '</button>';
+      h += '</div>';
+    } else {
+      h += '<div class="modal-title">New supplier company</div>';
+      h += '<div class="modal-sub">Create a new company, then invite suppliers to it.</div>';
+      h += '<div class="fg"><label class="flabel">Company name</label><input class="finput" id="m-co-name" placeholder="Company name" value="' + esc(mCoName) + '" oninput="mCoName=this.value" /></div>';
+      h += '<div class="fg2">';
+      h += '<div class="fg"><label class="flabel">Country</label><input class="finput" id="m-co-country" placeholder="Country" value="' + esc(mCoCountry) + '" oninput="mCoCountry=this.value" /></div>';
+      h += '<div class="fg"><label class="flabel">Client</label>';
+      h += '<select class="fselect" id="m-co-client" onchange="mCoClient=this.value"><option value="">Select client...</option>';
+      clients.forEach(function(c) { h += '<option value="' + c + '"' + (mCoClient===c?' selected':'') + '>' + c + '</option>'; });
+      h += '</select></div>';
+      h += '</div>';
+      h += '<div class="modal-actions">';
+      h += '<button class="btn btn-s" onclick="closeModal()">Cancel</button>';
+      h += '<button class="btn btn-dark' + (mSending ? ' btn-loading' : '') + '" ' + (!mCoName.trim() || mSending ? 'disabled' : '') + ' onclick="submitNewCompany()">' + (mSending ? 'Creating...' : 'Create company') + '</button>';
+      h += '</div>';
+    }
   }
 
   if (modal === 'invite-supplier') {
