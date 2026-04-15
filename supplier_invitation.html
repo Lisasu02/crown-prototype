@@ -3,151 +3,138 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Add Suppliers to Event — CROWN</title>
+<title>Event Builder — CROWN</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5F3EE; padding: 32px 20px; min-height: 100vh; }
-.wrap { max-width: 720px; margin: 0 auto; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #F5F3EE; display: flex; min-height: 100vh; }
 
-.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-.header-title { font-size: 20px; font-weight: 800; color: #111; }
-.crown-logo { font-size: 15px; font-weight: 800; letter-spacing: 0.1em; color: #111; }
-.crown-logo span { color: #1E8A3A; }
+/* ── SIDEBAR ── */
+.sidebar { width: 200px; background: #1A1A1A; color: #fff; padding: 24px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+.sidebar-logo { font-size: 16px; font-weight: 800; letter-spacing: 0.12em; padding: 0 20px 28px; color: #fff; }
+.sidebar-logo span { color: #1E8A3A; }
+.sidebar-nav { flex: 1; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 13px; font-weight: 500; color: #888; cursor: pointer; transition: all 0.12s; border-left: 3px solid transparent; }
+.sidebar-item:hover { color: #CCC; background: rgba(255,255,255,0.04); }
+.sidebar-item.active { color: #fff; background: rgba(255,255,255,0.08); border-left-color: #1E8A3A; }
+.sidebar-icon { font-size: 15px; width: 20px; text-align: center; }
 
-.role-tabs { display: flex; background: #fff; border: 1px solid #E0DDD6; border-radius: 10px; padding: 4px; margin-bottom: 20px; gap: 4px; }
-.rtab { flex: 1; padding: 9px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #888; border-radius: 7px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.rtab.on { background: #1E8A3A; color: #fff; }
+/* ── MAIN ── */
+.main { flex: 1; padding: 28px 32px; overflow-y: auto; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.top-bar-left { display: flex; align-items: center; gap: 16px; }
+.page-title { font-size: 22px; font-weight: 800; color: #111; }
+.view-tabs { display: flex; background: #fff; border: 1px solid #E0DDD6; border-radius: 8px; padding: 3px; gap: 3px; }
+.vtab { padding: 7px 16px; border: none; background: transparent; font-size: 12px; font-weight: 600; color: #888; border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.vtab.on { background: #1A1A1A; color: #fff; }
+.view-badge { font-size: 11px; font-weight: 600; color: #1E8A3A; border: 1px solid #C8E6C9; padding: 5px 14px; border-radius: 8px; background: #fff; }
 
-.card { background: #fff; border: 1px solid #E0DDD6; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
-.ctitle { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 3px; }
-.csub { font-size: 12px; color: #888; margin-bottom: 16px; line-height: 1.5; }
+.section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.section-title { font-size: 24px; font-weight: 800; color: #111; }
+.section-sub { font-size: 13px; color: #888; margin-top: 2px; }
 
-.search-row { display: flex; gap: 10px; align-items: center; position: relative; }
-.search-wrap { flex: 1; position: relative; }
-.sinput { width: 100%; padding: 10px 14px; border: 1px solid #E0DDD6; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; transition: border 0.15s; }
-.sinput:focus { border-color: #1E8A3A; background: #fff; }
+/* ── SEARCH ── */
+.search-bar { background: #fff; border: 1px solid #E0DDD6; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; position: relative; display: flex; align-items: center; gap: 10px; }
+.search-bar input { flex: 1; border: none; outline: none; font-size: 14px; font-family: inherit; background: transparent; }
+.search-icon { color: #BBB; font-size: 16px; }
 
-.dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0DDD6; border-top: none; border-radius: 0 0 8px 8px; max-height: 280px; overflow-y: auto; z-index: 50; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-.dd-item { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.08s; border-bottom: 1px solid #F5F3EE; }
+.dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0DDD6; border-top: none; border-radius: 0 0 10px 10px; max-height: 320px; overflow-y: auto; z-index: 50; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.dd-title { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #CCC; background: #FAFAF8; }
+.dd-item { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.08s; border-bottom: 1px solid #F5F3EE; }
 .dd-item:last-child { border-bottom: none; }
 .dd-item:hover { background: #F5FBF6; }
 .dd-item-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-.dd-avatar { width: 30px; height: 30px; border-radius: 50%; background: #D6EAD9; color: #1E8A3A; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+.dd-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+.dd-avatar.active { background: #D6EAD9; color: #1E8A3A; }
+.dd-avatar.invited { background: #FFE0B2; color: #E65100; }
 .dd-name { font-size: 13px; font-weight: 600; color: #111; }
 .dd-email { font-size: 11px; color: #888; }
-.dd-co { font-size: 11px; color: #AAA; font-weight: 500; white-space: nowrap; flex-shrink: 0; margin-left: 12px; }
-.dd-empty { padding: 14px; text-align: center; font-size: 12px; color: #AAA; }
-.dd-title { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #CCC; background: #FAFAF8; }
+.dd-right { display: flex; align-items: center; gap: 10px; }
+.dd-co { font-size: 11px; color: #AAA; font-weight: 500; white-space: nowrap; }
+.dd-empty { padding: 16px; text-align: center; font-size: 12px; color: #AAA; }
 
-.btn { padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; white-space: nowrap; }
-.btn-p { background: #1E8A3A; color: #fff; }
-.btn-p:hover { background: #166B2D; }
-.btn-p:disabled { opacity: 0.35; cursor: not-allowed; }
-.btn-s { background: #fff; color: #111; border: 1px solid #E0DDD6; }
+.badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 999px; display: inline-block; }
+.badge-active { background: #E8F5E9; color: #1E8A3A; }
+.badge-invited { background: #FFF3E0; color: #E65100; }
+
+.warn-bar { background: #FFFDE7; border: 1px solid #FFD54F; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #7B5E00; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+.btn { padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.btn-dark { background: #1A1A1A; color: #fff; }
+.btn-dark:hover { background: #333; }
+.btn-s { background: #fff; color: #111; border: 1px solid #E0DDD6; padding: 7px 14px; font-size: 12px; }
 .btn-s:hover { background: #F5F3EE; }
-.btn-invite { background: #1E8A3A; color: #fff; padding: 10px 16px; font-size: 12px; }
-.btn-invite:hover { background: #166B2D; }
 .btn-sm { padding: 6px 14px; font-size: 11px; }
-.btn-loading { position: relative; pointer-events: none; }
-.btn-loading::after { content: ''; position: absolute; width: 12px; height: 12px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; right: 10px; top: 50%; margin-top: -6px; }
-@keyframes spin { to { transform: rotate(360deg); } }
 
-.warn-inline { background: #FFFDE7; border: 1px solid #FFD54F; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #7B5E00; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+/* ── TABLE ── */
+.table-wrap { background: #fff; border: 1px solid #E0DDD6; border-radius: 12px; overflow: hidden; }
+.table-header { display: grid; grid-template-columns: 2fr 2fr 1.2fr 100px 36px; padding: 10px 20px; border-bottom: 1px solid #E8E5E0; }
+.th { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #AAA; }
+.table-row { display: grid; grid-template-columns: 2fr 2fr 1.2fr 100px 36px; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F0EDE8; }
+.table-row:last-child { border-bottom: none; }
+.td { font-size: 13px; color: #555; }
 
-/* Invite panel */
-.invite-panel { border: 1px solid #E0DDD6; border-radius: 10px; padding: 18px; margin-top: 14px; background: #FAFDF9; }
-.invite-panel-title { font-size: 14px; font-weight: 700; color: #1E8A3A; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
-.invite-close { background: none; border: none; font-size: 16px; color: #AAA; cursor: pointer; padding: 0 4px; }
-.invite-close:hover { color: #555; }
-.invite-step { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+.sup-cell { display: flex; align-items: center; gap: 10px; }
+.sup-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+.sup-avatar.active { background: #D6EAD9; color: #1E8A3A; }
+.sup-avatar.invited { background: #FFE0B2; color: #E65100; }
+.sup-name { font-size: 13px; font-weight: 600; color: #111; }
 
-/* Company search inside invite */
-.co-search-wrap { position: relative; margin-bottom: 12px; }
-.co-sinput { width: 100%; padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #fff; transition: border 0.15s; }
-.co-sinput:focus { border-color: #1E8A3A; }
-.co-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0DDD6; border-top: none; border-radius: 0 0 7px 7px; max-height: 180px; overflow-y: auto; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-.co-dd-item { padding: 9px 12px; cursor: pointer; font-size: 13px; color: #333; border-bottom: 1px solid #F5F3EE; transition: background 0.08s; }
-.co-dd-item:last-child { border-bottom: none; }
-.co-dd-item:hover { background: #E8F5E9; }
-.co-dd-item.sel { background: #E8F5E9; font-weight: 600; }
-.co-dd-empty { padding: 12px; text-align: center; font-size: 12px; color: #AAA; }
+.remove-btn { background: none; border: none; font-size: 14px; color: #CCC; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: all 0.12s; text-align: center; }
+.remove-btn:hover { color: #E53935; background: #FFF5F5; }
 
-.co-selected { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; color: #1B5E2F; }
-.co-selected-clear { background: none; border: none; font-size: 14px; color: #888; cursor: pointer; }
-.co-selected-clear:hover { color: #E53935; }
+.empty-state { text-align: center; padding: 28px; color: #AAA; font-size: 13px; }
 
-.create-co-btn { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px dashed #1E8A3A; border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 700; color: #1E8A3A; width: 100%; font-family: inherit; transition: all 0.12s; margin-bottom: 12px; }
-.create-co-btn:hover { background: #E8F5E9; border-style: solid; }
-
-.new-co-box { border: 1px solid #C8E6C9; border-radius: 8px; padding: 14px; background: #F5FBF6; margin-bottom: 12px; }
-.new-co-title { font-size: 11px; font-weight: 700; color: #1E8A3A; margin-bottom: 10px; }
-
-.fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
-.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.flabel { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #888; }
-.finput { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #fff; width: 100%; transition: border 0.15s; }
-.finput:focus { border-color: #1E8A3A; }
-.finput.invalid { border-color: #E53935; background: #FFF5F5; }
-.field-error { font-size: 10px; color: #E53935; margin-top: -6px; margin-bottom: 8px; }
-.fselect { padding: 9px 12px; border: 1px solid #E0DDD6; border-radius: 7px; font-size: 13px; font-family: inherit; outline: none; background: #F9F8F5; width: 100%; }
-.invite-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
-
-/* Link display */
-.link-result { background: #F5F3EE; border: 1px solid #E0DDD6; border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; font-family: monospace; color: #888; }
-.link-result-url { flex: 1; word-break: break-all; line-height: 1.5; }
-.copy-btn { flex-shrink: 0; padding: 5px 12px; border: 1px solid #E0DDD6; border-radius: 6px; background: #fff; font-size: 10px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.copy-btn:hover { background: #E8F5E9; }
-.copy-btn.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
-
-/* Added suppliers list */
-.added-card { margin-top: 14px; }
-.added-title { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.added-count { background: #1E8A3A; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
-.added-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #F0EDE8; }
-.added-item:last-child { border-bottom: none; }
-.added-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
-.added-icon.existing { background: #E8F5E9; color: #1E8A3A; }
-.added-icon.pending { background: #FFF3E0; color: #E65100; }
-.added-info { flex: 1; min-width: 0; }
-.added-name { font-size: 13px; font-weight: 600; color: #111; }
-.added-detail { font-size: 11px; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.added-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
-.added-badge.existing { background: #E8F5E9; color: #1E8A3A; }
-.added-badge.pending { background: #FFF3E0; color: #E65100; }
-.added-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.added-remove { background: none; border: none; font-size: 14px; color: #CCC; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: all 0.12s; }
-.added-remove:hover { color: #E53935; background: #FFF5F5; }
-.added-copy { padding: 3px 10px; border: 1px solid #E0DDD6; border-radius: 5px; background: #fff; font-size: 10px; font-weight: 700; color: #1E8A3A; cursor: pointer; font-family: inherit; transition: all 0.12s; }
-.added-copy:hover { background: #E8F5E9; }
-.added-copy.copied { background: #1E8A3A; color: #fff; border-color: #1E8A3A; }
-
-.empty-state { text-align: center; padding: 20px; color: #CCC; font-size: 12px; }
-.infobox { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #1B5E2F; margin-bottom: 14px; line-height: 1.5; }
+.infobox { background: #E8F5E9; border: 1px solid #A8D5B5; border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #1B5E2F; margin-bottom: 16px; line-height: 1.5; }
 
 .flash { animation: flashIn 0.4s ease; }
 @keyframes flashIn { 0% { background: #C8E6C9; } 100% { background: transparent; } }
 
-.divider { height: 1px; background: #E8E5E0; margin: 14px 0; }
+.event-count { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #888; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.event-count-badge { background: #1E8A3A; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
 
-@media (max-width: 520px) {
-  .fg2 { grid-template-columns: 1fr; gap: 8px; }
-  .search-row { flex-direction: column; }
-  .search-row .btn { width: 100%; text-align: center; }
-  .link-result { flex-direction: column; }
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .table-header, .table-row { grid-template-columns: 2fr 2fr 100px 36px; }
+  .table-header .th:nth-child(3), .table-row .td:nth-child(3) { display: none; }
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <div class="header-title">Add Suppliers to Event</div>
-    <div class="crown-logo">CR<span>&#9650;</span>WN</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">CR<span>&#9650;</span>WN</div>
+  <div class="sidebar-nav">
+    <div class="sidebar-item"><span class="sidebar-icon">&#9632;</span> Dashboard</div>
+    <div class="sidebar-item active"><span class="sidebar-icon">&#9654;</span> eAuctions</div>
+    <div class="sidebar-item" onclick="window.location='supplier_management.html'"><span class="sidebar-icon">&#9734;</span> Suppliers</div>
+    <div class="sidebar-item"><span class="sidebar-icon">&#9744;</span> Trainings</div>
+    <div class="sidebar-item"><span class="sidebar-icon">&#9786;</span> Users</div>
   </div>
-  <div class="role-tabs">
-    <button class="rtab on" id="tab-admin" onclick="switchRole('admin')">Admin view</button>
-    <button class="rtab" id="tab-buyer" onclick="switchRole('buyer')">Buyer view</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="page-title">Event Builder</div>
+      <div class="view-tabs">
+        <button class="vtab" id="tab-buyer" onclick="switchRole('buyer')">Buyer View</button>
+        <button class="vtab on" id="tab-admin" onclick="switchRole('admin')">Admin View</button>
+      </div>
+    </div>
+    <span class="view-badge" id="role-badge">Admin view</span>
   </div>
-  <div id="main"></div>
+
+  <div class="section-header">
+    <div>
+      <div class="section-title">Add suppliers to event</div>
+      <div class="section-sub">Search by email to find suppliers and add them to this e-auction</div>
+    </div>
+  </div>
+
+  <div id="buyer-info"></div>
+  <div id="main-content"></div>
 </div>
 
 <script>
@@ -235,8 +222,9 @@ function removeSupplier(idx) { eventSuppliers.splice(idx, 1); draw(); }
 function switchRole(r) {
   if (r === role) return;
   role = r;
-  document.getElementById('tab-admin').className = 'rtab' + (r === 'admin' ? ' on' : '');
-  document.getElementById('tab-buyer').className = 'rtab' + (r === 'buyer' ? ' on' : '');
+  document.getElementById('tab-admin').className = 'vtab' + (r === 'admin' ? ' on' : '');
+  document.getElementById('tab-buyer').className = 'vtab' + (r === 'buyer' ? ' on' : '');
+  document.getElementById('role-badge').textContent = r === 'admin' ? 'Admin view' : 'Buyer view';
   draw();
 }
 
@@ -264,7 +252,7 @@ function restoreFocus(info) {
 
 var suppressFocusOpen = false;
 document.addEventListener('mousedown', function(e) {
-  if (!e.target.closest('.search-wrap') && !e.target.closest('.dropdown')) {
+  if (!e.target.closest('.search-bar') && !e.target.closest('.dropdown')) {
     if (dropdownOpen) {
       dropdownOpen = false; suppressFocusOpen = true;
       draw();
@@ -281,30 +269,32 @@ function draw() {
   var h = '';
 
   if (!isAdmin) {
-    h += '<div class="infobox">Adding suppliers on behalf of <strong>Bonduelle</strong>.</div>';
+    document.getElementById('buyer-info').innerHTML = '<div class="infobox">Adding suppliers on behalf of <strong>Bonduelle</strong>.</div>';
+  } else {
+    document.getElementById('buyer-info').innerHTML = '';
   }
 
-  h += '<div class="card">';
-  h += '<div class="ctitle">Search & add suppliers</div>';
-  h += '<div class="csub">Paste a supplier email address to find and add them to this event.</div>';
-
-  h += '<div class="search-row">';
-  h += '<div class="search-wrap">';
-  h += '<input class="sinput" id="search-input" placeholder="Paste supplier email address..." value="' + esc(query) + '" oninput="setQuery(this.value)" onfocus="if(!suppressFocusOpen){dropdownOpen=true;draw()}" autocomplete="off" />';
+  // ─── SEARCH ───
+  h += '<div class="search-bar">';
+  h += '<span class="search-icon">&#128269;</span>';
+  h += '<input id="search-input" placeholder="Paste supplier email address..." value="' + esc(query) + '" oninput="setQuery(this.value)" onfocus="if(!suppressFocusOpen){dropdownOpen=true;draw()}" autocomplete="off" />';
 
   if (dropdownOpen) {
     h += '<div class="dropdown">';
     if (items.length > 0) {
       h += '<div class="dd-title">' + items.length + ' supplier account' + (items.length !== 1 ? 's' : '') + '</div>';
       items.forEach(function(a) {
-        var isPending = a.status === 'invited';
+        var st = a.status === 'invited' ? 'invited' : 'active';
         h += '<div class="dd-item" onmousedown="event.preventDefault();addSupplier(' + a.id + ')">';
         h += '<div class="dd-item-left">';
-        h += '<div class="dd-avatar" style="' + (isPending ? 'background:#FFE0B2;color:#E65100;' : '') + '">' + a.initials + '</div>';
-        h += '<div><div class="dd-name">' + esc(a.name) + (isPending ? ' <span style="font-size:9px;font-weight:700;color:#E65100;background:#FFF3E0;padding:1px 6px;border-radius:99px;margin-left:4px;">Pending</span>' : '') + '</div>';
+        h += '<div class="dd-avatar ' + st + '">' + a.initials + '</div>';
+        h += '<div><div class="dd-name">' + esc(a.name) + '</div>';
         h += '<div class="dd-email">' + esc(a.email) + '</div></div>';
         h += '</div>';
+        h += '<div class="dd-right">';
         h += '<div class="dd-co">' + esc(a.company) + '</div>';
+        if (st === 'invited') h += ' <span class="badge badge-invited">Pending</span>';
+        h += '</div>';
         h += '</div>';
       });
     } else {
@@ -312,49 +302,44 @@ function draw() {
     }
     h += '</div>';
   }
-  h += '</div>'; // search-wrap
-  h += '</div>'; // search-row
+  h += '</div>';
 
-  // No results — direct to Supplier Management
+  // No results warning
   if (query.length >= 2 && items.length === 0 && !dropdownOpen) {
-    h += '<div class="warn-inline">';
-    h += '<div><strong>No account found</strong> for \u201C' + esc(query) + '\u201D</div>';
-    h += '<a href="supplier_management.html" class="btn btn-p btn-sm" style="text-decoration:none;">Go to Supplier Management \u2192</a>';
+    h += '<div class="warn-bar">';
+    h += '<div><strong>No account found</strong> for \u201C' + esc(query) + '\u201D \u2014 invite them first in Supplier Management.</div>';
+    h += '<a href="supplier_management.html" class="btn btn-dark btn-sm">Go to Suppliers \u2192</a>';
     h += '</div>';
   }
 
-  h += '</div>'; // search card
-
-  // ─── ADDED SUPPLIERS LIST ───
-  h += '<div class="card added-card">';
-  h += '<div class="added-title">Suppliers added to event ';
-  if (eventSuppliers.length > 0) h += '<span class="added-count">' + eventSuppliers.length + '</span>';
+  // ─── EVENT SUPPLIERS TABLE ───
+  h += '<div class="event-count">Suppliers in this event ';
+  if (eventSuppliers.length > 0) h += '<span class="event-count-badge">' + eventSuppliers.length + '</span>';
   h += '</div>';
 
+  h += '<div class="table-wrap">';
   if (eventSuppliers.length === 0) {
     h += '<div class="empty-state">No suppliers added yet. Search by email above to find and add them.</div>';
   } else {
-    h += '<div class="added-list">';
+    h += '<div class="table-header">';
+    h += '<div class="th">Supplier</div><div class="th">Email</div><div class="th">Company</div><div class="th">Status</div><div class="th"></div>';
+    h += '</div>';
+
     eventSuppliers.forEach(function(s, idx) {
       var isFlash = lastAddedId && lastAddedId === s.id;
-      var isPending = s.status === 'invited';
-      h += '<div class="added-item' + (isFlash ? ' flash' : '') + '">';
-      h += '<div class="added-icon ' + (isPending ? 'pending' : 'existing') + '">' + (isPending ? '\u23F3' : '\u2713') + '</div>';
-      h += '<div class="added-info">';
-      h += '<div class="added-name">' + esc(s.name) + '</div>';
-      h += '<div class="added-detail">' + esc(s.email) + ' \u00B7 ' + esc(s.company) + '</div>';
-      h += '</div>';
-      h += '<span class="added-badge ' + (isPending ? 'pending' : 'existing') + '">' + (isPending ? 'Pending' : 'Added') + '</span>';
-      h += '<div class="added-actions">';
-      h += '<button class="added-remove" onclick="removeSupplier(' + idx + ')" title="Remove">\u2715</button>';
-      h += '</div>';
+      var st = s.status === 'invited' ? 'invited' : 'active';
+      h += '<div class="table-row' + (isFlash ? ' flash' : '') + '">';
+      h += '<div class="sup-cell"><div class="sup-avatar ' + st + '">' + s.initials + '</div><div class="sup-name">' + esc(s.name) + '</div></div>';
+      h += '<div class="td">' + esc(s.email) + '</div>';
+      h += '<div class="td">' + esc(s.company) + '</div>';
+      h += '<div><span class="badge badge-' + st + '">' + (st === 'active' ? 'Added' : 'Pending') + '</span></div>';
+      h += '<div><button class="remove-btn" onclick="removeSupplier(' + idx + ')" title="Remove">\u2715</button></div>';
       h += '</div>';
     });
-    h += '</div>';
   }
   h += '</div>';
 
-  document.getElementById('main').innerHTML = h;
+  document.getElementById('main-content').innerHTML = h;
   restoreFocus(focusInfo);
 
   if (!focusInfo) {
